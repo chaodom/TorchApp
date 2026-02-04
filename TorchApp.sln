@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TorchApp", "TorchApp\TorchApp.vcxproj", "{01E29E42-91B6-421C-9D7F-3BDBDE51618F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test", "test\test.vcxproj", "{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{01E29E42-91B6-421C-9D7F-3BDBDE51618F}.Debug|x64.ActiveCfg = Debug|x64
+		{01E29E42-91B6-421C-9D7F-3BDBDE51618F}.Debug|x64.Build.0 = Debug|x64
+		{01E29E42-91B6-421C-9D7F-3BDBDE51618F}.Debug|x86.ActiveCfg = Debug|x64
+		{01E29E42-91B6-421C-9D7F-3BDBDE51618F}.Release|x64.ActiveCfg = Release|x64
+		{01E29E42-91B6-421C-9D7F-3BDBDE51618F}.Release|x64.Build.0 = Release|x64
+		{01E29E42-91B6-421C-9D7F-3BDBDE51618F}.Release|x86.ActiveCfg = Release|x64
+		{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}.Debug|x64.ActiveCfg = Debug|x64
+		{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}.Debug|x64.Build.0 = Debug|x64
+		{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}.Debug|x86.ActiveCfg = Debug|x64
+		{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}.Release|x64.ActiveCfg = Release|x64
+		{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}.Release|x64.Build.0 = Release|x64
+		{0C4DB5E3-4B0E-4DEA-A77A-BC23BA9CA24B}.Release|x86.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4ECAA48B-A0E8-4A8E-81FF-EA49C5115F05}
+	EndGlobalSection
+EndGlobal

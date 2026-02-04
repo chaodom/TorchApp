@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<opencv_storage>
+  <TopN>1</TopN>
+  <Verify>0</Verify>  <!--若verify为1,则须存在类别名称相对应的图片文件夹-->
+</opencv_storage>

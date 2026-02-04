@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<opencv_storage>
+  <!-- <ModelFile>best.torchscript</ModelFile> -->
+  <Mode>detect</Mode> <!--regress, classify, crnn, detect, segment, keypoint-->
+  <Imgsz>640 640</Imgsz>
+  <UseGPU>1</UseGPU>
+  <Channel>3</Channel>
+  <BatchSize>10</BatchSize> <!--yolo导出onnx时的batchsize必须和此值一致-->
+  <ImagePath>images</ImagePath>
+</opencv_storage>

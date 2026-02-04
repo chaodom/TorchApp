@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<opencv_storage>
+  <!-- <ModelFile>best.torchscript</ModelFile> -->
+  <Mode>regress</Mode> <!--regress, classify, crnn, detect, segment, keypoint-->
+  <Imgsz>16 64</Imgsz>
+  <UseGPU>0</UseGPU>
+  <Channel>3</Channel>
+  <BatchSize>2</BatchSize>
+  <!--cv::Scalar为4元素向量-->
+  <!-- <Mean>0.5 0.5 0.5 0</Mean>   -->
+  <!-- <Stdev>0.5 0.5 0.5 0</Stdev> -->
+  <ImagePath>images</ImagePath>
+</opencv_storage>

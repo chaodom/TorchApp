@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<opencv_storage>
+  <!-- <ModelFile>best.torchscript</ModelFile> -->
+  <Mode>classify</Mode> <!--regress, classify, crnn, detect, segment, keypoint-->
+  <Imgsz>50 50</Imgsz>
+  <UseGPU>0</UseGPU>
+  <Channel>3</Channel>
+  <BatchSize>1</BatchSize>
+  <!--<Mean>0.5 0.5 0.5 0</Mean>-->  <!--cv::Scalar为4元素向量-->
+   <!--<Stdev>0.5 0.5 0.5 0</Stdev>-->
+  <ImagePath>images</ImagePath>
+</opencv_storage>

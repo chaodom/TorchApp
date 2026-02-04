@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<opencv_storage>
+  <DetectType>rcnn</DetectType> <!--yolo11, yolo26, rcnn-->
+  <Agnostic>1</Agnostic>  <!--NMS时是否类别无关-->
+  <ScoreThreshold>0.25</ScoreThreshold>
+  <NMSThreshold>0.45</NMSThreshold>
+  <IncludeClasses></IncludeClasses>
+  <Resize>0</Resize>  <!--预处理时空白区域填充色-->
+  <Epsilon>0.001</Epsilon>  <!--简化轮廓时的多边形近似阈值-->
+  <Verify>0</Verify>  <!--若为真,则图片文件夹内须包含annotation.txt-->
+  <IOU>0.9</IOU>  <!--核对时的IOU阈值-->
+</opencv_storage>

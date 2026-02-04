@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<opencv_storage>
+  <!-- <ModelFile>best.torchscript</ModelFile> -->
+  <Mode>keypoint</Mode> <!--regress, classify, crnn, detect, segment, keypoint-->
+  <!-- <Imgsz>640 640</Imgsz> -->
+  <UseGPU>0</UseGPU>
+  <Channel>3</Channel>
+  <BatchSize>2</BatchSize>
+  <ImagePath>images</ImagePath>
+</opencv_storage>
