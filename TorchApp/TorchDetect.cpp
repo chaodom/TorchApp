@@ -1,10 +1,10 @@
-#include "TorchDetect.h"
+ï»¿#include "TorchDetect.h"
 #include "torch/script.h"
 #ifndef TORCH_CPU
 #include <c10/cuda/CUDAStream.h>
 #endif
 
-// ÓÃÓÚ·ÖÀàNMS²»Í¬Àà±ğµÄºòÑ¡¿òÆ½ÒÆÁ¿£¬7680ÊÇ¾ø´ó²¿·ÖÉè±¸µÄ×î´ó·Ö±æÂÊ
+// ç”¨äºåˆ†ç±»NMSä¸åŒç±»åˆ«çš„å€™é€‰æ¡†å¹³ç§»é‡ï¼Œ7680æ˜¯ç»å¤§éƒ¨åˆ†è®¾å¤‡çš„æœ€å¤§åˆ†è¾¨ç‡
 static const int MAX_WH = 7680;
 
 namespace torchapp {
@@ -23,36 +23,36 @@ namespace torchapp {
 		}
 		else
 		{
-			// »ñÈ¡ÊäÈëÍ¼Ïñ³ß´ç
+			// è·å–è¾“å…¥å›¾åƒå°ºå¯¸
 			int img_h = img.rows;
 			int img_w = img.cols;
 			int target_h = m_size.height;
 			int target_w = m_size.width;
-			// ¼ÆËãËõ·Å±ÈÀı
+			// è®¡ç®—ç¼©æ”¾æ¯”ä¾‹
 			float r_h = static_cast<float>(target_h) / img_h;
 			float r_w = static_cast<float>(target_w) / img_w;
 			float r = std::min(r_h, r_w);
-			// ¼ÆËãËõ·ÅºóµÄ³ß´ç
+			// è®¡ç®—ç¼©æ”¾åçš„å°ºå¯¸
 			int new_unpad_w = static_cast<int>(std::round(img_w * r));
 			int new_unpad_h = static_cast<int>(std::round(img_h * r));
-			// ¼ÆËãÌî³äÁ¿
+			// è®¡ç®—å¡«å……é‡
 			int dw = target_w - new_unpad_w;
 			int dh = target_h - new_unpad_h;
-			// ¼ÆËãÉÏÏÂ×óÓÒÌî³äÁ¿
+			// è®¡ç®—ä¸Šä¸‹å·¦å³å¡«å……é‡
 			int top = 0, bottom = 0, left = 0, right = 0;
 			if (m_isCenter)
-			{	// ¾ÓÖĞÌî³ä£¨ÉÏÏÂ/×óÓÒ¾ù·ÖÌî³ä£©
+			{	// å±…ä¸­å¡«å……ï¼ˆä¸Šä¸‹/å·¦å³å‡åˆ†å¡«å……ï¼‰
 				top = static_cast<int>(std::round(dh / 2.0 - 0.1));
 				bottom = dh - top;
 				left = static_cast<int>(std::round(dw / 2.0 - 0.1));
 				right = dw - left;
 			}
 			else
-			{	// ×óÉÏ½Ç¶ÔÆë£¨½öÓÒÏÂÌî³ä£©
+			{	// å·¦ä¸Šè§’å¯¹é½ï¼ˆä»…å³ä¸‹å¡«å……ï¼‰
 				bottom = dh;
 				right = dw;
 			}
-			// µ÷ÕûÍ¼Ïñ´óĞ¡
+			// è°ƒæ•´å›¾åƒå¤§å°
 			Mat resized;
 			if (img_w != new_unpad_w || img_h != new_unpad_h)
 				cv::resize(img, resized, cv::Size(new_unpad_w, new_unpad_h));
@@ -65,12 +65,12 @@ namespace torchapp {
 
 	void TorchYolo::scaleBox(cv::Rect& box, Mat img)
 	{
-		// »ñÈ¡ÊäÈëÍ¼Ïñ³ß´ç
+		// è·å–è¾“å…¥å›¾åƒå°ºå¯¸
 		int img_h = img.rows;
 		int img_w = img.cols;
 		int target_h = m_size.height;
 		int target_w = m_size.width;
-		// ¼ÆËãËõ·Å±ÈÀı
+		// è®¡ç®—ç¼©æ”¾æ¯”ä¾‹
 		float r_h = static_cast<float>(target_h) / img_h;
 		float r_w = static_cast<float>(target_w) / img_w;
 		if (m_scale_fill)
@@ -92,10 +92,10 @@ namespace torchapp {
 			box &= cv::Rect(0, 0, img.cols, img.rows);
 			return;
 		}
-		// ¼ÆËãËõ·ÅºóµÄ³ß´ç
+		// è®¡ç®—ç¼©æ”¾åçš„å°ºå¯¸
 		int new_unpad_w = static_cast<int>(std::round(img_w * r));
 		int new_unpad_h = static_cast<int>(std::round(img_h * r));
-		// ¼ÆËãÌî³äÁ¿
+		// è®¡ç®—å¡«å……é‡
 		int dw = target_w - new_unpad_w;
 		int dh = target_h - new_unpad_h;
 		int pad_x = static_cast<int>(std::round(dw / 2.0 - 0.1));
@@ -121,10 +121,10 @@ namespace torchapp {
 			float r = std::min(static_cast<float>(mask_h) / img_h, static_cast<float>(mask_w) / img_w);
 			int new_unpad_w = static_cast<int>(std::round(img_w * r));
 			int new_unpad_h = static_cast<int>(std::round(img_h * r));
-			// ¼ÆËãÌî³äÁ¿
+			// è®¡ç®—å¡«å……é‡
 			int dw = mask_w - new_unpad_w;
 			int dh = mask_h - new_unpad_h;
-			// ¼ÆËãËõ·ÅºóµÄ³ß´ç
+			// è®¡ç®—ç¼©æ”¾åçš„å°ºå¯¸
 			int top = m_isCenter ? static_cast<int>(std::round(dh / 2.0 - 0.1)) : 0;
 			int bottom = top + new_unpad_h;
 			int left = m_isCenter ? static_cast<int>(std::round(dw / 2.0 - 0.1)) : 0;
@@ -141,12 +141,12 @@ namespace torchapp {
 
 	void TorchYolo::scaleCoord(vector<cv::Point>& points, Mat img)
 	{
-		// »ñÈ¡ÊäÈëÍ¼Ïñ³ß´ç
+		// è·å–è¾“å…¥å›¾åƒå°ºå¯¸
 		int img_h = img.rows;
 		int img_w = img.cols;
 		int target_h = m_size.height;
 		int target_w = m_size.width;
-		// ¼ÆËãËõ·Å±ÈÀı
+		// è®¡ç®—ç¼©æ”¾æ¯”ä¾‹
 		float r_h = static_cast<float>(target_h) / img_h;
 		float r_w = static_cast<float>(target_w) / img_w;
 		if (m_scale_fill)
@@ -172,10 +172,10 @@ namespace torchapp {
 			}
 			return;
 		}
-		// ¼ÆËãËõ·ÅºóµÄ³ß´ç
+		// è®¡ç®—ç¼©æ”¾åçš„å°ºå¯¸
 		int new_unpad_w = static_cast<int>(std::round(img_w * r));
 		int new_unpad_h = static_cast<int>(std::round(img_h * r));
-		// ¼ÆËãÌî³äÁ¿
+		// è®¡ç®—å¡«å……é‡
 		int dw = target_w - new_unpad_w;
 		int dh = target_h - new_unpad_h;
 		int pad_x = static_cast<int>(std::round(dw / 2.0 - 0.1));
@@ -201,16 +201,16 @@ namespace torchapp {
 			srcs[i] = letterBox(imgs[i]);
 		auto result = forward(srcs, true);
 		// YOLO11: (batchSize, 4 + num_classes + keypoint_num * keypoint_dimension, num_boxes) num_boxes:(w/32*h/32+w/16*h/16+w/8*h/8)
-		// YOLO26: (batchSize, num_boxes, 6 + keypoint_num * keypoint_dimension) num_boxesÄ¬ÈÏ300ÊÇ×î´óºòÑ¡¿ò¸öÊı£¬6ÊÇ(x1, y1, x2, y2, confidence, class)
+		// YOLO26: (batchSize, num_boxes, 6 + keypoint_num * keypoint_dimension) num_boxesé»˜è®¤300æ˜¯æœ€å¤§å€™é€‰æ¡†ä¸ªæ•°ï¼Œ6æ˜¯(x1, y1, x2, y2, confidence, class)
 		at::Tensor predicts = result.isTensor() ? result.toTensor() : result.toTuple()->elements()[0].toTensor();
 		//int channels = predicts.size(1);
 		//int num_boxes = predicts.size(2);
-		//int num_mask = result.isTensor() ? 0 : result.toTuple()->elements()[1].toTensor().size(1);   // ÓÃÓÚOnnxSegmentÀàµ÷ÓÃdetectº¯Êı
+		//int num_mask = result.isTensor() ? 0 : result.toTuple()->elements()[1].toTensor().size(1);   // ç”¨äºOnnxSegmentç±»è°ƒç”¨detectå‡½æ•°
 		int batch_size = predicts.size(0);
 		vector<vector<DetectOutput>> outputs(batch_size);
 		for (int batchIdx = 0; batchIdx != batch_size; ++batchIdx)
 		{
-			// ÌáÈ¡µ±Ç°Åú´ÎµÄÊä³ö
+			// æå–å½“å‰æ‰¹æ¬¡çš„è¾“å‡º
 			// YOLO11: (num_classes + 4 + keypoint_num * keypoint_dimension, num_boxes)
 			// YOLO26: (num_boxes, 6 + keypoint_num * keypoint_dimension)
 			auto predict_batch = predicts[batchIdx];
@@ -223,63 +223,63 @@ namespace torchapp {
 	vector<DetectOutput> TorchYolo11::processOne(at::Tensor* pPredict, Mat origin_img, double scoreThreshold, vector<int> classes, at::Tensor* pProto)
 	{
 		at::Tensor predict = *pPredict;
-		int num_class = m_vecClsNames.size();  // Àà±ğÊı
-		int num_boxes = predict.size(1);          // ×Ü¿òÊı
-		int mi = 4 + num_class;                         // maskÏµÊıÆğÊ¼Ë÷Òı
-		// -------------------------- ÅúÁ¿É¸Ñ¡ºòÑ¡¿ò --------------------------
+		int num_class = m_vecClsNames.size();  // ç±»åˆ«æ•°
+		int num_boxes = predict.size(1);          // æ€»æ¡†æ•°
+		int mi = 4 + num_class;                         // maskç³»æ•°èµ·å§‹ç´¢å¼•
+		// -------------------------- æ‰¹é‡ç­›é€‰å€™é€‰æ¡† --------------------------
 		auto cls_scores = predict.slice(0, 4, mi);  // (nc, num_boxes)
-		auto max_scores = cls_scores.amax(0);       // (num_boxes) Ã¿¸ö¿òµÄ×î´óÀà±ğµÃ·Ö
-		auto xc = max_scores > scoreThreshold;         // (num_boxes) ÖÃĞÅ¶È¹ıÂËÑÚÂë
-		// Àà±ğ¹ıÂË
+		auto max_scores = cls_scores.amax(0);       // (num_boxes) æ¯ä¸ªæ¡†çš„æœ€å¤§ç±»åˆ«å¾—åˆ†
+		auto xc = max_scores > scoreThreshold;         // (num_boxes) ç½®ä¿¡åº¦è¿‡æ»¤æ©ç 
+		// ç±»åˆ«è¿‡æ»¤
 		auto cls_mask = at::ones_like(xc, at::kBool);
 		if (!classes.empty())
 		{
-			auto cls_ids = cls_scores.argmax(0).to(at::kInt);  // (num_boxes) ×î¼ÑÀà±ğID
+			auto cls_ids = cls_scores.argmax(0).to(at::kInt);  // (num_boxes) æœ€ä½³ç±»åˆ«ID
 			cls_mask = at::zeros_like(xc, at::kBool);
 			for (int cls : classes)
 				cls_mask = cls_mask | (cls_ids == cls);
 		}
-		// ºÏ²¢¹ıÂËÑÚÂë + ÌáÈ¡±£ÁôË÷Òı
+		// åˆå¹¶è¿‡æ»¤æ©ç  + æå–ä¿ç•™ç´¢å¼•
 		auto filt_mask = xc & cls_mask;
 		auto keep_indices = filt_mask.nonzero().squeeze();
 		if (keep_indices.numel() == 0)
 			return {};
 		int keep_num = keep_indices.numel();
-		// -------------------------- ÅúÁ¿ÌáÈ¡¹ıÂËºóµÄÊı¾İ --------------------------
-		// ÌáÈ¡xywh¿ò (4, keep_num)£ºcx, cy, w, h
+		// -------------------------- æ‰¹é‡æå–è¿‡æ»¤åçš„æ•°æ® --------------------------
+		// æå–xywhæ¡† (4, keep_num)ï¼šcx, cy, w, h
 		auto boxes_xywh = predict.slice(0, 0, 4).index({ at::indexing::Ellipsis, keep_indices });
-		// ÌáÈ¡µÃ·Ö¡¢Àà±ğID
+		// æå–å¾—åˆ†ã€ç±»åˆ«ID
 		auto scores = max_scores.index({ keep_indices });                                         // (keep_num)
 		auto cls_ids = cls_scores.argmax(0).index({ keep_indices }).to(at::kInt);                 // (keep_num)
-		// ÌáÈ¡maskÏµÊı£º½öµ±proto·Ç¿ÕÊ±
+		// æå–maskç³»æ•°ï¼šä»…å½“protoéç©ºæ—¶
 		at::Tensor mask_coeffs;
-		// ÌáÈ¡¹Ø¼üµãÕÅÁ¿£¨½öµ±protoÎª¿ÕÇÒ´æÔÚ¹Ø¼üµãÎ¬¶ÈÊ±£©
+		// æå–å…³é”®ç‚¹å¼ é‡ï¼ˆä»…å½“protoä¸ºç©ºä¸”å­˜åœ¨å…³é”®ç‚¹ç»´åº¦æ—¶ï¼‰
 		at::Tensor keypoints_tensor;
 		if (pProto)
 			mask_coeffs = predict.slice(0, mi, predict.size(0)).index({ at::indexing::Ellipsis, keep_indices });  // (num_mask, keep_num)
 		else if (predict.size(0) > mi)	// keypoints
 			keypoints_tensor = predict.slice(0, mi, predict.size(0)).index({ at::indexing::Ellipsis, keep_indices });  // (3*num_kp, keep_num)
-		// -------------------------- ÅúÁ¿¼ÆËãrect×ø±ê --------------------------
-		auto cx = boxes_xywh.slice(0, 0, 1);  // (1, keep_num) ÖĞĞÄx
-		auto cy = boxes_xywh.slice(0, 1, 2);  // (1, keep_num) ÖĞĞÄy
-		auto w = boxes_xywh.slice(0, 2, 3);   // (1, keep_num) ¿í¶È
-		auto h = boxes_xywh.slice(0, 3, 4);   // (1, keep_num) ¸ß¶È
+		// -------------------------- æ‰¹é‡è®¡ç®—rectåæ ‡ --------------------------
+		auto cx = boxes_xywh.slice(0, 0, 1);  // (1, keep_num) ä¸­å¿ƒx
+		auto cy = boxes_xywh.slice(0, 1, 2);  // (1, keep_num) ä¸­å¿ƒy
+		auto w = boxes_xywh.slice(0, 2, 3);   // (1, keep_num) å®½åº¦
+		auto h = boxes_xywh.slice(0, 3, 4);   // (1, keep_num) é«˜åº¦
 		auto x = cx - w / 2.0f;
 		auto y = cy - h / 2.0f;
-		// Àà±ğÆ«ÒÆ
+		// ç±»åˆ«åç§»
 		auto c = cls_ids.to(torch::kFloat32) * (m_agnostic ? 0.0f : static_cast<float>(MAX_WH));
 		x = x + c.unsqueeze(0);  // (1, keep_num)
 		y = y + c.unsqueeze(0);  // (1, keep_num)
-		// -------------------------- ×ª»»ÎªOpenCV Rect --------------------------
+		// -------------------------- è½¬æ¢ä¸ºOpenCV Rect --------------------------
 		std::vector<cv::Rect> boxes_nms;
 		std::vector<float> confs_nms;
-		// ÅúÁ¿¿½±´µ½CPU
+		// æ‰¹é‡æ‹·è´åˆ°CPU
 		auto x_cpu = x.to(at::kCPU).contiguous();
 		auto y_cpu = y.to(at::kCPU).contiguous();
 		auto w_cpu = w.to(at::kCPU).contiguous();
 		auto h_cpu = h.to(at::kCPU).contiguous();
 		auto scores_cpu = scores.to(at::kCPU).contiguous();
-		// Ö¸Õë±éÀú£¨Ö±½Ó¶ÁÈ¡¼ÆËãºÃµÄx/y/w/h£¬ÎŞ¶îÍâ¼ÆËã£©
+		// æŒ‡é’ˆéå†ï¼ˆç›´æ¥è¯»å–è®¡ç®—å¥½çš„x/y/w/hï¼Œæ— é¢å¤–è®¡ç®—ï¼‰
 		const float* x_ptr = x_cpu.data_ptr<float>();
 		const float* y_ptr = y_cpu.data_ptr<float>();
 		const float* w_ptr = w_cpu.data_ptr<float>();
@@ -287,10 +287,10 @@ namespace torchapp {
 		const float* s_ptr = scores_cpu.data_ptr<float>();
 		for (int i = 0; i < keep_num; ++i)
 		{
-			float rx = x_ptr[i];  // ×óÉÏ½Çx£¨ÒÑ¼ÓÀà±ğÆ«ÒÆ£©
-			float ry = y_ptr[i];  // ×óÉÏ½Çy£¨ÒÑ¼ÓÀà±ğÆ«ÒÆ£©
-			float rw = w_ptr[i];  // ¿í¶È
-			float rh = h_ptr[i];  // ¸ß¶È
+			float rx = x_ptr[i];  // å·¦ä¸Šè§’xï¼ˆå·²åŠ ç±»åˆ«åç§»ï¼‰
+			float ry = y_ptr[i];  // å·¦ä¸Šè§’yï¼ˆå·²åŠ ç±»åˆ«åç§»ï¼‰
+			float rw = w_ptr[i];  // å®½åº¦
+			float rh = h_ptr[i];  // é«˜åº¦
 			boxes_nms.emplace_back(static_cast<int>(rx), static_cast<int>(ry), static_cast<int>(rw), static_cast<int>(rh));
 			confs_nms.push_back(s_ptr[i]);
 		}
@@ -299,7 +299,7 @@ namespace torchapp {
 		cv::dnn::NMSBoxes(boxes_nms, confs_nms, scoreThreshold, m_nmsThreshold, nmsIndices);
 		if (nmsIndices.empty())
 			return {};
-		// -------------------------- ÅúÁ¿¼ÆËãÑÚÂë --------------------------
+		// -------------------------- æ‰¹é‡è®¡ç®—æ©ç  --------------------------
 		const auto device = predict.device();
 		at::Tensor nms_indices_tensor = torch::tensor(nmsIndices, torch::dtype(torch::kLong).device(device));
 		cv::Mat masks;
@@ -310,27 +310,27 @@ namespace torchapp {
 			int num_mask = proto.size(0);
 			proto_h = proto.size(1);
 			proto_w = proto.size(2);
-			// ÌáÈ¡NMSºóµÄmaskÏµÊı
+			// æå–NMSåçš„maskç³»æ•°
 			auto nms_coeffs = mask_coeffs.index({ at::indexing::Ellipsis, nms_indices_tensor });
-			// ProtoÖØËÜÎª¶şÎ¬¾ØÕó
+			// Protoé‡å¡‘ä¸ºäºŒç»´çŸ©é˜µ
 			auto proto_2d = proto.reshape({ num_mask, proto_h * proto_w }).to(torch::kFloat32).to(device);
-			// ¾ØÕó³Ë·¨
+			// çŸ©é˜µä¹˜æ³•
 			auto nms_masks = nms_coeffs.t().mm(proto_2d);
-			// ×ª»»ÎªOpenCV Mat£¨ĞŞÕıÀàĞÍºÍÉè±¸£©
+			// è½¬æ¢ä¸ºOpenCV Matï¼ˆä¿®æ­£ç±»å‹å’Œè®¾å¤‡ï¼‰
 			auto nms_masks_cpu = nms_masks.to(torch::kCPU).contiguous();
 			masks = cv::Mat(static_cast<int>(nmsIndices.size()), static_cast<int>(proto_h * proto_w), CV_32FC1, nms_masks_cpu.data_ptr<float>()).clone();
 		}
-		// -------------------- ÌáÈ¡NMSºóµÄ¹Ø¼üµãÕÅÁ¿ --------------------------
+		// -------------------- æå–NMSåçš„å…³é”®ç‚¹å¼ é‡ --------------------------
 		at::Tensor nms_keypoints;
 		if (!pProto && keypoints_tensor.defined())
 		{
 			nms_keypoints = keypoints_tensor.index({ at::indexing::Ellipsis, nms_indices_tensor });  // (3*num_kp, nms_num)
 			nms_keypoints = nms_keypoints.t().to(at::kCPU).contiguous();
 		}
-		// -------------------------- ¹¹Ôì×îÖÕÊä³ö --------------------------
+		// -------------------------- æ„é€ æœ€ç»ˆè¾“å‡º --------------------------
 		std::vector<DetectOutput> output;
 		const float* kp_ptr = nms_keypoints.defined() ? nms_keypoints.data_ptr<float>() : nullptr;
-		// ÌáÇ°¿½±´classIdsµ½CPU£¬ºóĞøÖ±½ÓË÷Òı
+		// æå‰æ‹·è´classIdsåˆ°CPUï¼Œåç»­ç›´æ¥ç´¢å¼•
 		auto cls_ids_cpu = cls_ids.to(at::kCPU).contiguous();
 		const int* cls_ptr = cls_ids_cpu.data_ptr<int>();
 		for (size_t i = 0; i != nmsIndices.size(); ++i) 
@@ -343,15 +343,15 @@ namespace torchapp {
 			output_.score = confs_nms[idx];
 			output_.cls_name = output_.cls_id < m_vecClsNames.size() ? m_vecClsNames[output_.cls_id] : std::to_string(output_.cls_id);
 			output_.box = boxes_nms[idx];
-			// ÒÆ³ıÀà±ğÆ«ÒÆ
+			// ç§»é™¤ç±»åˆ«åç§»
 			const int c = m_agnostic ? 0 : MAX_WH * output_.cls_id;
 			output_.box.x -= c;
 			output_.box.y -= c;
-			// Ëõ·Å¿òµ½Ô­Í¼³ß´ç
+			// ç¼©æ”¾æ¡†åˆ°åŸå›¾å°ºå¯¸
 			scaleBox(output_.box, origin_img);
 			if (output_.box.width <= 0 || output_.box.height <= 0)
 				continue;
-			// ´¦Àímask
+			// å¤„ç†mask
 			if (pProto)
 			{
 				auto mask_flat = masks.row(static_cast<int>(i));
@@ -360,14 +360,14 @@ namespace torchapp {
 			}
 			else if (keypoints_tensor.defined())
 			{
-				// Ö±½ÓÍ¨¹ıTensorÁĞË÷Òı»ñÈ¡µ±Ç°¿òµÄËùÓĞ¹Ø¼üµã£¨¾ØÕó²Ù×÷£¬ÎŞÑ­»·¿½±´£©
+				// ç›´æ¥é€šè¿‡Tensoråˆ—ç´¢å¼•è·å–å½“å‰æ¡†çš„æ‰€æœ‰å…³é”®ç‚¹ï¼ˆçŸ©é˜µæ“ä½œï¼Œæ— å¾ªç¯æ‹·è´ï¼‰
 				const float* curr_kp_ptr = kp_ptr + (i * nms_keypoints.size(1));
-				// ³õÊ¼»¯¹Ø¼üµãÈİÆ÷
+				// åˆå§‹åŒ–å…³é”®ç‚¹å®¹å™¨
 				output_.points.resize(nms_keypoints.size(1) / 3);
-				// ÅúÁ¿ÌáÈ¡x,y×ø±ê£¨ºöÂÔconfÖµ£¬ÈçĞè±£Áô¿É×ÔĞĞÌí¼Ó£©
+				// æ‰¹é‡æå–x,yåæ ‡ï¼ˆå¿½ç•¥confå€¼ï¼Œå¦‚éœ€ä¿ç•™å¯è‡ªè¡Œæ·»åŠ ï¼‰
 				for (int n = 0; n != output_.points.size(); ++n)
 					output_.points[n] = cv::Point(curr_kp_ptr[n * 3], curr_kp_ptr[n * 3 + 1]);
-				// Ëõ·Åµ½Ô­Í¼³ß´ç
+				// ç¼©æ”¾åˆ°åŸå›¾å°ºå¯¸
 				scaleCoord(output_.points, origin_img);
 			}
 			output.push_back(output_);
@@ -386,22 +386,171 @@ namespace torchapp {
 	}
 
 
+	vector<DetectOutput> TorchYoloV5::processOne(at::Tensor* pPredict, Mat origin_img, double scoreThreshold, vector<int> classes, at::Tensor* pProto)
+	{
+		at::Tensor predict = *pPredict;
+		int num_class = m_vecClsNames.size();  // ç±»åˆ«æ•°
+		int attr_start_idx = 5 + num_class;    // maskç³»æ•°æˆ–å…³é”®ç‚¹èµ·å§‹ç´¢å¼•
+		// predictç»´åº¦ï¼š(num_boxes, 5 + num_classes + extra)
+		// -------------------------- æ‰¹é‡æå–æ ¸å¿ƒæ•°æ® --------------------------
+		auto boxes_xywh = predict.slice(1, 0, 4).to(torch::kFloat32);         // (num_boxes, 4)ï¼šcx, cy, w, h
+		auto obj_scores = predict.slice(1, 4, 5).squeeze(1).to(torch::kFloat32);  // (num_boxes)
+		auto cls_scores = predict.slice(1, 5, attr_start_idx).to(torch::kFloat32); // (num_boxes, nc)
+		auto max_result = cls_scores.max(1);
+		auto max_cls_scores = std::get<0>(max_result);  // (num_boxes)
+		auto cls_ids = std::get<1>(max_result).to(at::kInt);  // (num_boxes)
+		auto confidences = obj_scores * max_cls_scores;
+		// -------------------------- æ‰¹é‡ç­›é€‰å€™é€‰æ¡† --------------------------
+		auto conf_mask = confidences > scoreThreshold;
+		auto cls_mask = at::ones_like(conf_mask, at::kBool);
+		if (!classes.empty())
+		{
+			cls_mask = at::zeros_like(conf_mask, at::kBool);
+			for (int cls : classes)
+				cls_mask = cls_mask | (cls_ids == cls);
+		}
+		auto w = boxes_xywh.slice(1, 2, 3).squeeze(1);
+		auto h = boxes_xywh.slice(1, 3, 4).squeeze(1);
+		auto box_valid_mask = (w > 0) & (h > 0);
+		auto filt_mask = conf_mask & cls_mask & box_valid_mask;
+		auto keep_indices = filt_mask.nonzero().squeeze(1);
+		if (keep_indices.numel() == 0)
+			return {};
+		int keep_num = keep_indices.numel();
+		// -------------------------- æ‰¹é‡æå–è¿‡æ»¤åçš„æ•°æ® --------------------------
+		auto keep_boxes_xywh = boxes_xywh.index({ keep_indices, at::indexing::Ellipsis });
+		auto keep_confs = confidences.index({ keep_indices });
+		auto keep_cls_ids = cls_ids.index({ keep_indices });
+		at::Tensor mask_coeffs;
+		at::Tensor keypoints_tensor;
+		if (pProto)
+			mask_coeffs = predict.slice(1, attr_start_idx, predict.size(1)).index({ keep_indices, at::indexing::Ellipsis }); // (keep_num, num_mask)
+		else if (predict.size(1) > attr_start_idx)
+			keypoints_tensor = predict.slice(1, attr_start_idx, predict.size(1)).index({ keep_indices, at::indexing::Ellipsis }); // (keep_num, 3*num_kp)
+		// -------------------------- æ‰¹é‡è®¡ç®—rectåæ ‡ --------------------------
+		auto cx = keep_boxes_xywh.slice(1, 0, 1).squeeze(1);
+		auto cy = keep_boxes_xywh.slice(1, 1, 2).squeeze(1);
+		auto bw = keep_boxes_xywh.slice(1, 2, 3).squeeze(1);
+		auto bh = keep_boxes_xywh.slice(1, 3, 4).squeeze(1);
+		auto x = cx - bw / 2.0f;
+		auto y = cy - bh / 2.0f;
+		// ç±»åˆ«åç§»
+		auto c = keep_cls_ids.to(torch::kFloat32) * (m_agnostic ? 0.0f : static_cast<float>(MAX_WH));
+		x = x + c;
+		y = y + c;
+		// -------------------------- è½¬æ¢ä¸ºOpenCV Rect --------------------------
+		std::vector<cv::Rect> boxes_nms;
+		std::vector<float> confs_nms;
+		boxes_nms.reserve(keep_num);
+		confs_nms.reserve(keep_num);
+		auto x_cpu = x.to(at::kCPU).contiguous();
+		auto y_cpu = y.to(at::kCPU).contiguous();
+		auto w_cpu = bw.to(at::kCPU).contiguous();
+		auto h_cpu = bh.to(at::kCPU).contiguous();
+		auto confs_cpu = keep_confs.to(at::kCPU).contiguous();
+		const float* x_ptr = x_cpu.data_ptr<float>();
+		const float* y_ptr = y_cpu.data_ptr<float>();
+		const float* w_ptr = w_cpu.data_ptr<float>();
+		const float* h_ptr = h_cpu.data_ptr<float>();
+		const float* s_ptr = confs_cpu.data_ptr<float>();
+		for (int i = 0; i < keep_num; ++i)
+		{
+			boxes_nms.emplace_back(static_cast<int>(x_ptr[i]), static_cast<int>(y_ptr[i]), static_cast<int>(w_ptr[i]), static_cast<int>(h_ptr[i]));
+			confs_nms.push_back(s_ptr[i]);
+		}
+		// -------------------------- NMS  --------------------------
+		std::vector<int> nmsIndices;
+		cv::dnn::NMSBoxes(boxes_nms, confs_nms, scoreThreshold, m_nmsThreshold, nmsIndices);
+		if (nmsIndices.empty())
+			return {};
+		const auto device = predict.device();
+		at::Tensor nms_indices_tensor = torch::tensor(nmsIndices, torch::dtype(torch::kLong).device(device));
+		// -------------------------- æ‰¹é‡è®¡ç®—æ©ç  --------------------------
+		cv::Mat masks;
+		int proto_h = 0, proto_w = 0;
+		if (pProto)
+		{
+			at::Tensor proto = *pProto;
+			int num_mask = proto.size(0);
+			proto_h = proto.size(1);
+			proto_w = proto.size(2);
+			auto nms_coeffs = mask_coeffs.index({ nms_indices_tensor, at::indexing::Ellipsis }); // (nms_num, num_mask)
+			auto proto_2d = proto.reshape({ num_mask, proto_h * proto_w }).to(torch::kFloat32).to(device);
+			auto nms_masks = nms_coeffs.mm(proto_2d);
+			auto nms_masks_cpu = nms_masks.to(torch::kCPU).contiguous();
+			masks = cv::Mat(static_cast<int>(nmsIndices.size()), static_cast<int>(proto_h * proto_w), CV_32FC1, nms_masks_cpu.data_ptr<float>()).clone();
+		}
+		// -------------------- æå–NMSåçš„å…³é”®ç‚¹å¼ é‡ --------------------------
+		at::Tensor nms_keypoints;
+		if (!pProto && keypoints_tensor.defined())
+			nms_keypoints = keypoints_tensor.index({ nms_indices_tensor, at::indexing::Ellipsis }).to(at::kCPU).contiguous();
+		// -------------------------- æ„é€ æœ€ç»ˆè¾“å‡º --------------------------
+		std::vector<DetectOutput> output;
+		const float* kp_ptr = nms_keypoints.defined() ? nms_keypoints.data_ptr<float>() : nullptr;
+		auto cls_ids_cpu = keep_cls_ids.to(at::kCPU).contiguous();
+		const int* cls_ptr = cls_ids_cpu.data_ptr<int>();
+		for (size_t i = 0; i != nmsIndices.size(); ++i)
+		{
+			int idx = nmsIndices[i];
+			if (boxes_nms[idx].width <= 0 || boxes_nms[idx].height <= 0)
+				continue;
+			DetectOutput output_;
+			output_.cls_id = cls_ptr[idx];
+			output_.score = confs_nms[idx];
+			output_.cls_name = output_.cls_id < m_vecClsNames.size() ? m_vecClsNames[output_.cls_id] : std::to_string(output_.cls_id);
+			output_.box = boxes_nms[idx];
+			const int c = m_agnostic ? 0 : MAX_WH * output_.cls_id;
+			output_.box.x -= c;
+			output_.box.y -= c;
+			scaleBox(output_.box, origin_img);
+			if (output_.box.width <= 0 || output_.box.height <= 0)
+				continue;
+			if (pProto)
+			{
+				auto mask_flat = masks.row(static_cast<int>(i));
+				auto mask_2d = mask_flat.reshape(1, proto_h);
+				output_.mask = adjustMask(mask_2d, origin_img, output_.box);
+			}
+			else if (keypoints_tensor.defined())
+			{
+				const float* curr_kp_ptr = kp_ptr + (i * nms_keypoints.size(1));
+				output_.points.resize(nms_keypoints.size(1) / 3);
+				for (int n = 0; n != output_.points.size(); ++n)
+					output_.points[n] = cv::Point(curr_kp_ptr[n * 3], curr_kp_ptr[n * 3 + 1]);
+				scaleCoord(output_.points, origin_img);
+			}
+			output.push_back(output_);
+		}
+		return output;
+	}
+
+	vector<DetectOutput> TorchYoloV5::detect(Mat img, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYolo::detect(img, scoreThreshold, classes);
+	}
+
+	vector<vector<DetectOutput>> TorchYoloV5::detect(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYolo::detect(imgs, scoreThreshold, classes);
+	}
+
+
 	vector<DetectOutput> TorchYolo26::processOne(at::Tensor* pPredict, Mat origin_img, double scoreThreshold, vector<int> classes, at::Tensor* pProto)
 	{
 		at::Tensor predict = *pPredict;
-		// predictÎ¬¶È£º(num_boxes, 6 + num_mask)  
-		const int mask_start_idx = 6;           // maskÏµÊıÆğÊ¼Ë÷Òı£¨x1,y1,x2,y2,conf,classId,mask...£©
-		// -------------------------- ÅúÁ¿ÌáÈ¡ºËĞÄÊı¾İ --------------------------
-		// ÌáÈ¡¿ò×ø±ê (num_boxes, 4) - x1,y1,x2,y2
+		// predictç»´åº¦ï¼š(num_boxes, 6 + num_mask)
+		const int mask_start_idx = 6;           // maskç³»æ•°èµ·å§‹ç´¢å¼•ï¼ˆx1,y1,x2,y2,conf,classId,mask...ï¼‰
+		// -------------------------- æ‰¹é‡æå–æ ¸å¿ƒæ•°æ® --------------------------
+		// æå–æ¡†åæ ‡ (num_boxes, 4) - x1,y1,x2,y2
 		auto boxes_xyxy = predict.slice(1, 0, 4).to(torch::kFloat32);
-		// ÌáÈ¡ÖÃĞÅ¶È (num_boxes)
-		auto confidences = predict.slice(1, 4, 5).squeeze(1).to(torch::kFloat32);  // µÚ5ÁĞ£¨Ë÷Òı4£©
-		// ÌáÈ¡Àà±ğID (num_boxes)
-		auto cls_ids = predict.slice(1, 5, 6).squeeze(1).to(torch::kInt);  // µÚ6ÁĞ£¨Ë÷Òı5£©
-		// -------------------------- ÅúÁ¿É¸Ñ¡ºòÑ¡¿ò --------------------------
-		// ÖÃĞÅ¶È¹ıÂËÑÚÂë£ºconf > threshold
-		auto conf_mask = confidences > scoreThreshold;  // (num_boxes) boolÕÅÁ¿
-		// Àà±ğ¹ıÂËÑÚÂë
+		// æå–ç½®ä¿¡åº¦ (num_boxes)
+		auto confidences = predict.slice(1, 4, 5).squeeze(1).to(torch::kFloat32);  // ç¬¬5åˆ—ï¼ˆç´¢å¼•4ï¼‰
+		// æå–ç±»åˆ«ID (num_boxes)
+		auto cls_ids = predict.slice(1, 5, 6).squeeze(1).to(torch::kInt);  // ç¬¬6åˆ—ï¼ˆç´¢å¼•5ï¼‰
+		// -------------------------- æ‰¹é‡ç­›é€‰å€™é€‰æ¡† --------------------------
+		// ç½®ä¿¡åº¦è¿‡æ»¤æ©ç ï¼šconf > threshold
+		auto conf_mask = confidences > scoreThreshold;  // (num_boxes) boolå¼ é‡
+		// ç±»åˆ«è¿‡æ»¤æ©ç 
 		auto cls_mask = at::ones_like(conf_mask, at::kBool);
 		if (!classes.empty()) 
 		{
@@ -409,45 +558,45 @@ namespace torchapp {
 			for (int cls : classes) 
 				cls_mask = cls_mask | (cls_ids == cls);
 		}
-		// ¿òÓĞĞ§ĞÔÑÚÂë£ºwidth/height > 0 (x2-x1>0, y2-y1>0)
+		// æ¡†æœ‰æ•ˆæ€§æ©ç ï¼šwidth/height > 0 (x2-x1>0, y2-y1>0)
 		auto x1 = boxes_xyxy.slice(1, 0, 1).squeeze(1);
 		auto y1 = boxes_xyxy.slice(1, 1, 2).squeeze(1);
 		auto x2 = boxes_xyxy.slice(1, 2, 3).squeeze(1);
 		auto y2 = boxes_xyxy.slice(1, 3, 4).squeeze(1);
 		auto box_valid_mask = ((x2 - x1) > 0) & ((y2 - y1) > 0);  // (num_boxes)
-		// ºÏ²¢ËùÓĞ¹ıÂËÑÚÂë£ºÖÃĞÅ¶È´ï±ê + Àà±ğ´ï±ê + ¿òÓĞĞ§
+		// åˆå¹¶æ‰€æœ‰è¿‡æ»¤æ©ç ï¼šç½®ä¿¡åº¦è¾¾æ ‡ + ç±»åˆ«è¾¾æ ‡ + æ¡†æœ‰æ•ˆ
 		auto filt_mask = conf_mask & cls_mask & box_valid_mask;  // (num_boxes)
-		auto keep_indices = filt_mask.nonzero().squeeze(1);      // ±£ÁôµÄ¿òË÷Òı
+		auto keep_indices = filt_mask.nonzero().squeeze(1);      // ä¿ç•™çš„æ¡†ç´¢å¼•
 		if (keep_indices.numel() == 0)
-			return {};               // ÎŞ·ûºÏÌõ¼şµÄ¿ò£¬Ö±½Ó·µ»Ø
+			return {};               // æ— ç¬¦åˆæ¡ä»¶çš„æ¡†ï¼Œç›´æ¥è¿”å›
 		int keep_num = keep_indices.numel();
-		// -------------------------- ÅúÁ¿ÌáÈ¡¹ıÂËºóµÄÊı¾İ --------------------------
-		// ÌáÈ¡¹ıÂËºóµÄ¿ò¡¢ÖÃĞÅ¶È¡¢Àà±ğID
+		// -------------------------- æ‰¹é‡æå–è¿‡æ»¤åçš„æ•°æ® --------------------------
+		// æå–è¿‡æ»¤åçš„æ¡†ã€ç½®ä¿¡åº¦ã€ç±»åˆ«ID
 		auto keep_boxes = boxes_xyxy.index({ keep_indices, at::indexing::Ellipsis });  // (keep_num, 4)
 		auto keep_confs = confidences.index({ keep_indices });                         // (keep_num)
 		auto keep_cls_ids = cls_ids.index({ keep_indices });                           // (keep_num)
-		// ÌáÈ¡maskÏµÊı£º½öµ±proto·Ç¿ÕÊ±
+		// æå–maskç³»æ•°ï¼šä»…å½“protoéç©ºæ—¶
 		at::Tensor mask_coeffs;
-		// ÌáÈ¡¹Ø¼üµãÕÅÁ¿£¨½öµ±protoÎª¿ÕÇÒ´æÔÚ¹Ø¼üµãÎ¬¶ÈÊ±£©
+		// æå–å…³é”®ç‚¹å¼ é‡ï¼ˆä»…å½“protoä¸ºç©ºä¸”å­˜åœ¨å…³é”®ç‚¹ç»´åº¦æ—¶ï¼‰
 		at::Tensor keypoints_tensor;
 		if (pProto) 
 			mask_coeffs = predict.slice(1, mask_start_idx, predict.size(1)).index({ keep_indices, at::indexing::Ellipsis });      // (keep_num, num_mask)
 		else if (predict.size(1) > mask_start_idx)	//keypoints
 			keypoints_tensor = predict.slice(1, mask_start_idx, predict.size(1)).index({ keep_indices, at::indexing::Ellipsis });  // (keep_num, 3*num_kp)
 		
-		// -------------------------- ÅúÁ¿¿½±´µ½CPU£¨½öÒ»´Î¿½±´£©-------------------------- 
+		// -------------------------- æ‰¹é‡æ‹·è´åˆ°CPUï¼ˆä»…ä¸€æ¬¡æ‹·è´ï¼‰--------------------------
 		auto boxes_cpu = keep_boxes.to(torch::kCPU).contiguous();
 		auto confs_cpu_tensor = keep_confs.to(torch::kCPU).contiguous();
 		auto cls_ids_cpu_tensor = keep_cls_ids.to(torch::kCPU).contiguous();
 		at::Tensor keypoints_cpu;
 		if (keypoints_tensor.defined()) 
 			keypoints_cpu = keypoints_tensor.to(torch::kCPU).contiguous();  // (keep_num, 3*num_kp)
-		// Ö¸Õë±éÀú¹¹½¨Rect
+		// æŒ‡é’ˆéå†æ„å»ºRect
 		const float* b_ptr = boxes_cpu.data_ptr<float>();
 		const float* c_ptr = confs_cpu_tensor.data_ptr<float>();
 		const int* cls_ptr = cls_ids_cpu_tensor.data_ptr<int>();
 		const float* kp_ptr = keypoints_cpu.defined() ? keypoints_cpu.data_ptr<float>() : nullptr;
-		// -------------------------- ÅúÁ¿¼ÆËãÑÚÂë£¨¶ÔÆëOnnxÂß¼­£¬ÎŞNMS£© --------------------------
+		// -------------------------- æ‰¹é‡è®¡ç®—æ©ç ï¼ˆå¯¹é½Onnxé€»è¾‘ï¼Œæ— NMSï¼‰ --------------------------
 		const auto device = predict.device();
 		cv::Mat masks;
 		int proto_h = 0, proto_w = 0;
@@ -457,17 +606,17 @@ namespace torchapp {
 			int num_mask = proto.size(0);
 			proto_h = proto.size(1);
 			proto_w = proto.size(2);
-			// ÑÚÂëÏµÊı¾ØÕó (keep_num, num_mask)
+			// æ©ç ç³»æ•°çŸ©é˜µ (keep_num, num_mask)
 			auto mask_coeffs_cpu = mask_coeffs.to(torch::kCPU).contiguous();
-			// ProtoÖØËÜÎª¶şÎ¬¾ØÕó (num_mask, proto_h*proto_w)
+			// Protoé‡å¡‘ä¸ºäºŒç»´çŸ©é˜µ (num_mask, proto_h*proto_w)
 			auto proto_2d = proto.reshape({ num_mask, proto_h * proto_w }).to(torch::kFloat32).to(device);
-			// ¾ØÕó³Ë·¨£º(keep_num, num_mask) * (num_mask, h*w) = (keep_num, h*w)
+			// çŸ©é˜µä¹˜æ³•ï¼š(keep_num, num_mask) * (num_mask, h*w) = (keep_num, h*w)
 			auto nms_masks = mask_coeffs.mm(proto_2d);
-			// ×ª»»ÎªOpenCV Mat
+			// è½¬æ¢ä¸ºOpenCV Mat
 			auto masks_cpu = nms_masks.to(torch::kCPU).contiguous();
 			masks = cv::Mat(static_cast<int>(keep_num), static_cast<int>(proto_h * proto_w), CV_32FC1, masks_cpu.data_ptr<float>()).clone();
 		}
-		// -------------------------- ¹¹Ôì×îÖÕÊä³ö£¨¶ÔÆëOnnxÂß¼­£¬ÎŞNMS£© --------------------------
+		// -------------------------- æ„é€ æœ€ç»ˆè¾“å‡ºï¼ˆå¯¹é½Onnxé€»è¾‘ï¼Œæ— NMSï¼‰ --------------------------
 		std::vector<DetectOutput> output;
 		for (size_t i = 0; i != keep_num; ++i)
 		{
@@ -484,24 +633,24 @@ namespace torchapp {
 			scaleBox(output_.box, origin_img);
 			if (output_.box.width <= 0 || output_.box.height <= 0)
 				continue;
-			// ´¦ÀíÑÚÂë
+			// å¤„ç†æ©ç 
 			if (pProto) 
 			{
 				cv::Mat mask_flat = masks.row(static_cast<int>(i));
 				cv::Mat mask_2d = mask_flat.reshape(1, proto_h);
 				output_.mask = adjustMask(mask_2d, origin_img, output_.box);
 			}
-			// ´¦Àíkeypoints
+			// å¤„ç†keypoints
 			else if (keypoints_tensor.defined())
 			{
-				// ´ÓÅúÁ¿¿½±´µÄCPUÕÅÁ¿ÖĞ»ñÈ¡µ±Ç°¿òµÄ¹Ø¼üµãÊı¾İ£¨¾ØÕóË÷Òı£¬ÅúÁ¿ÓÅÊÆ£©
+				// ä»æ‰¹é‡æ‹·è´çš„CPUå¼ é‡ä¸­è·å–å½“å‰æ¡†çš„å…³é”®ç‚¹æ•°æ®ï¼ˆçŸ©é˜µç´¢å¼•ï¼Œæ‰¹é‡ä¼˜åŠ¿ï¼‰
 				const float* curr_kp_ptr = kp_ptr + (i * keypoints_cpu.size(1));
-				// ³õÊ¼»¯¹Ø¼üµãÈİÆ÷
+				// åˆå§‹åŒ–å…³é”®ç‚¹å®¹å™¨
 				output_.points.resize(keypoints_cpu.size(1) / 3);
-				// ÅúÁ¿ÌáÈ¡x,y×ø±ê£¨ºöÂÔconfÖµ£¬ÈçĞè±£Áô¿É×ÔĞĞÌí¼Ó£©
+				// æ‰¹é‡æå–x,yåæ ‡ï¼ˆå¿½ç•¥confå€¼ï¼Œå¦‚éœ€ä¿ç•™å¯è‡ªè¡Œæ·»åŠ ï¼‰
 				for (int n = 0; n != output_.points.size(); ++n)
 					output_.points[n] = cv::Point(curr_kp_ptr[n * 3], curr_kp_ptr[n * 3 + 1]);
-				// Ëõ·Åµ½Ô­Í¼³ß´ç
+				// ç¼©æ”¾åˆ°åŸå›¾å°ºå¯¸
 				scaleCoord(output_.points, origin_img);
 			}
 			output.push_back(output_);
@@ -672,21 +821,21 @@ namespace torchapp {
 		at::Tensor tensor_box; 
 		if (out_tuple.size() == 4)	// detect
 		{
-			// out_tupleµÄË³ĞòÊÇ(boxes, classes, scores)
+			// out_tupleçš„é¡ºåºæ˜¯(boxes, classes, scores)
 			tensor_clsID = out_tuple[1].toTensor().toType(torch::kInt).to(at::kCPU);
 			tensor_score = out_tuple[2].toTensor().to(at::kCPU);
 			tensor_box = out_tuple[0].toTensor().to(at::kCPU);
 		}
-		else if (out_tuple.size() == 5)	// segmentµ÷ÓÃdetect·½·¨
+		else if (out_tuple.size() == 5)	// segmentè°ƒç”¨detectæ–¹æ³•
 		{
-			// out_tupleµÄË³ĞòÊÇ(boxes, classes, masks, scores)
+			// out_tupleçš„é¡ºåºæ˜¯(boxes, classes, masks, scores)
 			tensor_clsID = out_tuple[1].toTensor().toType(torch::kInt).to(at::kCPU);
 			tensor_score = out_tuple[3].toTensor().to(at::kCPU);
 			tensor_box = out_tuple[0].toTensor().to(at::kCPU);
 		}
-		else if (out_tuple.size() == 6)	// keypointµ÷ÓÃdetect·½·¨
+		else if (out_tuple.size() == 6)	// keypointè°ƒç”¨detectæ–¹æ³•
 		{
-			// out_tupleµÄË³ĞòÊÇ(boxes, classes, keypoint_heatmaps, keypoints, scores)
+			// out_tupleçš„é¡ºåºæ˜¯(boxes, classes, keypoint_heatmaps, keypoints, scores)
 			tensor_clsID = out_tuple[1].toTensor().toType(torch::kInt).to(at::kCPU);
 			tensor_score = out_tuple[4].toTensor().to(at::kCPU);
 			tensor_box = out_tuple[0].toTensor().to(at::kCPU);

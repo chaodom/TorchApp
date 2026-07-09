@@ -1,4 +1,4 @@
-#include "TorchSegment.h"
+ï»¿#include "TorchSegment.h"
 #include <torch/script.h>
 
 namespace torchapp {
@@ -15,11 +15,11 @@ namespace torchapp {
 			srcs[i] = letterBox(imgs[i]);
 		auto result = forward(srcs, true).toTuple()->elements();
 		// YOLO11: (batchSize, 4 + num_classes+ num_masks, num_boxes) num_boxes:(w/32*h/32+w/16*h/16+w/8*h/8)
-		// YOLO26: // (batchSize, num_boxes, 6 + num_masks) num_boxesÄ¬ÈÏ300ÊÇ×î´óºòÑ¡¿ò¸öÊı£¬6ÊÇ(x1, y1, x2, y2, confidence, class)
+		// YOLO26: // (batchSize, num_boxes, 6 + num_masks) num_boxesé»˜è®¤300æ˜¯æœ€å¤§å€™é€‰æ¡†ä¸ªæ•°ï¼Œ6æ˜¯(x1, y1, x2, y2, confidence, class)
 		auto predicts = result[0].toTensor();   
 		auto protos = result[1].toTensor(); // (batchSize, num_masks,  proto_h, proto_w)
 
-		// ´òÓ¡
+		// æ‰“å°
 		/*at::Tensor predicts_to_print = predicts[0].index({
 		at::indexing::Slice(0, 10),
 		at::indexing::Slice(0, 6) });
@@ -39,7 +39,7 @@ namespace torchapp {
 		vector<vector<DetectOutput>> outputs(batch_size);
 		for (int batchIdx = 0; batchIdx != batch_size; ++batchIdx)
 		{
-			// ÌáÈ¡µ±Ç°Åú´ÎµÄÊä³ö 
+			// æå–å½“å‰æ‰¹æ¬¡çš„è¾“å‡º
 			// YOLO11: (4 + num_classes + num_masks, num_boxes)
 			// YOLO26: (num_boxes, 6 + num_masks)
 			auto predict_batch = predicts[batchIdx];
@@ -56,6 +56,17 @@ namespace torchapp {
 	}
 
 	vector<vector<DetectOutput>> TorchYolo11Seg::segment(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloSeg::segment(imgs, scoreThreshold, classes);
+	}
+
+
+	vector<DetectOutput> TorchYoloV5Seg::segment(Mat img, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloSeg::segment(img, scoreThreshold, classes);
+	}
+
+	vector<vector<DetectOutput>> TorchYoloV5Seg::segment(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
 	{
 		return TorchYoloSeg::segment(imgs, scoreThreshold, classes);
 	}
@@ -87,7 +98,7 @@ namespace torchapp {
 		else
 			result = forward(img);
 		auto out_tuple = result.toTuple()->elements();
-		// out_tupleµÄË³ĞòÊÇ(boxes, classes, masks, scores)
+		// out_tupleçš„é¡ºåºæ˜¯(boxes, classes, masks, scores)
 		auto tensor_clsID = out_tuple[1].toTensor().toType(torch::kInt).to(at::kCPU);
 		auto tensor_score = out_tuple[3].toTensor().to(at::kCPU);
 		auto tensor_box = out_tuple[0].toTensor().to(at::kCPU);

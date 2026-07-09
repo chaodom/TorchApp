@@ -1,4 +1,4 @@
-#include "TorchKeyPoint.h"
+Ôªø#include "TorchKeyPoint.h"
 #include <torch/script.h>
 
 namespace torchapp {
@@ -20,6 +20,17 @@ namespace torchapp {
 	}
 
 	vector<vector<DetectOutput>> TorchYolo11Pose::detectKeyPoint(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloPose::detectKeyPoint(imgs, scoreThreshold, classes);
+	}
+
+
+	vector<DetectOutput> TorchYoloV5Pose::detectKeyPoint(Mat img, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloPose::detectKeyPoint(img, scoreThreshold, classes);
+	}
+
+	vector<vector<DetectOutput>> TorchYoloV5Pose::detectKeyPoint(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
 	{
 		return TorchYoloPose::detectKeyPoint(imgs, scoreThreshold, classes);
 	}
@@ -51,7 +62,7 @@ namespace torchapp {
 		else
 			result = forward(img);
 		auto out_tuple = result.toTuple()->elements();
-		// out_tupleµƒÀ≥–Ú «(boxes, classes, keypoint_heatmaps, keypoints, scores)
+		// out_tupleÁöÑÈ°∫Â∫èÊòØ(boxes, classes, keypoint_heatmaps, keypoints, scores)
 		auto tensor_clsID = out_tuple[1].toTensor().toType(torch::kInt).to(at::kCPU);
 		auto tensor_score = out_tuple[4].toTensor().to(at::kCPU);
 		auto tensor_box = out_tuple[0].toTensor().to(at::kCPU);

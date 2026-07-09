@@ -1,4 +1,4 @@
-//#include "TorchRegress.h"
+ï»¿//#include "TorchRegress.h"
 //#include "TorchClassify.h"
 //#include "TorchCRNN.h"
 //#include "TorchDetect.h"
@@ -14,12 +14,12 @@
 //using namespace torchapp;
 //using namespace ljc;
 //
-////²ÎÊıÉè¶¨
+////å‚æ•°è®¾å®š
 //int top_N = 1;
 //double scoreThreshold_detect = 0.25;
 //double nmsThreshold_detect = 0.45;
-//double scoreThreshold_segment = 0.25;	// Ä¬ÈÏ0.25 YoloV11-segÊÇ0.45
-//double nmsThreshold_segment = 0.45;	// Ä¬ÈÏ0.45 YoloV11-segÊÇ0.5
+//double scoreThreshold_segment = 0.25;	// é»˜è®¤0.25 YoloV11-segæ˜¯0.45
+//double nmsThreshold_segment = 0.45;	// é»˜è®¤0.45 YoloV11-segæ˜¯0.5
 //double maskThreshold_segment = 0.5;
 //double scoreThreshold_keypoint = 0.5;
 //static const int WIDTH = 300;
@@ -111,12 +111,12 @@
 //	else if (params.type == "yolo11seg")
 //		std::dynamic_pointer_cast<TorchYolo11Seg>(pDetect)->setDetectParam(true, nmsThreshold_segment);
 //	string model_file, label_file, path;
-//	cout << "ÊäÈëÄ£ĞÍÎÄ¼ş; ";
+//	cout << "è¾“å…¥æ¨¡å‹æ–‡ä»¶; ";
 //	cin >> model_file;
-//	cout << "ÊäÈë±êÇ©ÎÄ¼ş; ";
+//	cout << "è¾“å…¥æ ‡ç­¾æ–‡ä»¶; ";
 //	cin >> label_file;
 //	params.pTorchApp->initial(model_file, params.size, label_file, params.useGPU, params.channel, params.mean, params.stdev);
-//	cout << "ÊäÈë" + params.type + "Í¼Æ¬ÎÄ¼ş¼Ğ: ";
+//	cout << "è¾“å…¥" + params.type + "å›¾ç‰‡æ–‡ä»¶å¤¹: ";
 //	cin >> path;
 //	CreateDirectory((path + "_").c_str(), NULL);
 //	auto files = FileOperate(path).getAllFiles(0);
@@ -162,6 +162,6 @@
 //	clock_t start0 = clock();
 //	TestSegment(paramMaskRCNN);
 //	double time0 = double(clock() - start0) / CLOCKS_PER_SEC;
-//	cout << "ÓÃÊ±" << time0 << "Ãë" << endl;
+//	cout << "ç”¨æ—¶" << time0 << "ç§’" << endl;
 //	system("pause");
 //}

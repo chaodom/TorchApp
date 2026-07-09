@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHCRNN_H
+ï»¿#ifndef TORCHAPP_TORCHCRNN_H
 #define TORCHAPP_TORCHCRNN_H
 
 #include "TorchApp.h"
@@ -21,7 +21,7 @@ namespace torchapp {
 		CRNNOutput recognize(Mat img);
 
 	private:
-		CRNNOutput decode(vector<string> elements, vector<double> probs);	// ½«Êä³ö×ªÎªÔ­Éú×Ö·û´®
+		CRNNOutput decode(vector<string> elements, vector<double> probs);	// å°†è¾“å‡ºè½¬ä¸ºåŽŸç”Ÿå­—ç¬¦ä¸²
 
 	private:
 		static const string s_strSpaceChar;

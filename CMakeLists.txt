@@ -10,6 +10,7 @@ add_definitions(-DTORCHAPP_DLLEXPORT)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME} ../../torchvision/torchvision/include)
 aux_source_directory(${CMAKE_CURRENT_SOURCE_DIR}/${LIB_NAME} SRC_LIST)
 add_library(${LIB_NAME} SHARED ${SRC_LIST})
+target_compile_options(${LIB_NAME} PRIVATE $<$<CXX_COMPILER_ID:MSVC>:/execution-charset:.936>)
 
 find_package(Torch REQUIRED)
 find_package(OpenCV REQUIRED)

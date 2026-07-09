@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHFINAL_H
+﻿#ifndef TORCHAPP_TORCHFINAL_H
 #define TORCHAPP_TORCHFINAL_H
 
 #include "TorchClassify.h"
@@ -14,6 +14,22 @@ namespace torchapp {
 	public:
 		TorchYolo11Final() {}
 		~TorchYolo11Final() {}
+
+		virtual vector<DetectOutput> detect(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<vector<DetectOutput>> detect(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<DetectOutput> segment(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<vector<DetectOutput>> segment(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<DetectOutput> detectKeyPoint(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<vector<DetectOutput>> detectKeyPoint(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
+
+	};
+
+
+	class TORCHAPP_API TorchYoloV5Final final :public TorchYoloV5Seg, public TorchYoloV5Pose
+	{
+	public:
+		TorchYoloV5Final() {}
+		~TorchYoloV5Final() {}
 
 		virtual vector<DetectOutput> detect(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
 		virtual vector<vector<DetectOutput>> detect(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});

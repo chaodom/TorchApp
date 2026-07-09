@@ -1,4 +1,4 @@
-#include "TorchCRNN.h"
+﻿#include "TorchCRNN.h"
 #include <torch/script.h>
 
 namespace torchapp {

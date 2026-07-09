@@ -1,4 +1,4 @@
-#include "TorchApp.h"
+﻿#include "TorchApp.h"
 #include <fstream>
 #include <torch/script.h>
 #include <torchvision/vision.h>

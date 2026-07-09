@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHAPP_H
+ï»¿#ifndef TORCHAPP_TORCHAPP_H
 #define TORCHAPP_TORCHAPP_H
 
 #include <opencv2/opencv.hpp>
@@ -45,7 +45,7 @@ namespace torchapp {
 		shared_ptr<Model> m_pModel;
 		int m_iChannel;
 		cv::Size m_size;
-		cv::Scalar m_mean;	// ¹éÒ»»¯ºó¾ùÖµ
+		cv::Scalar m_mean;	// å½’ä¸€åŒ–åå‡å€¼
 		cv::Scalar m_stdev;
 		bool m_bUseGPU;
 		vector<string> m_vecClsNames;

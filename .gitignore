@@ -27,12 +27,29 @@
 *.lib
 
 # Executables
+*.exe
 *.out
 *.app
 
 .vs
+x64
 build
-/x64/Debug
-/x64/Release/*
-!/x64/Release/*.exe
-*/x64/*
+*/x64
+*.pdb
+*.ilk
+*.idb
+*.iobj
+*.ipdb
+*.exp
+*.tlog
+*.recipe
+*.lastbuildstate
+*.log
+
+# Model/runtime outputs
+*.onnx
+*.pt
+images_
+false
+wrong
+nolabel

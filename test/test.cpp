@@ -1,4 +1,4 @@
-#include "TorchFinal.h"
+ï»¿#include "TorchFinal.h"
 #include "FileOperate.h"
 #include "AnnotationTransform.h"
 #include <fstream>
@@ -11,7 +11,7 @@ using namespace torchapp;
 using namespace ljc;
 
 vector<string> modes{ "regress", "classify", "crnn", "detect", "segment", "keypoint" };
-vector<string> detect_types{ "yolo11", "yolo26", "rcnn" };
+vector<string> detect_types{ "yolo11", "yolov5", "yolo26", "rcnn" };
 shared_ptr<TorchApp> pTorchApp;
 vector<cv::Scalar> colors;
 string path;
@@ -25,12 +25,12 @@ static string UTF8ToGB(const char* str)
 	WCHAR* strSrc;
 	LPSTR szRes;
 
-	//»ñµÃÁÙÊ±±äÁ¿µÄ´óĞ¡
+	//è·å¾—ä¸´æ—¶å˜é‡çš„å¤§å°
 	int i = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
 	strSrc = new WCHAR[i + 1];
 	MultiByteToWideChar(CP_UTF8, 0, str, -1, strSrc, i);
 
-	//»ñµÃÁÙÊ±±äÁ¿µÄ´óĞ¡
+	//è·å¾—ä¸´æ—¶å˜é‡çš„å¤§å°
 	i = WideCharToMultiByte(CP_ACP, 0, strSrc, -1, NULL, 0, NULL, NULL);
 	szRes = new CHAR[i + 1];
 	WideCharToMultiByte(CP_ACP, 0, strSrc, -1, szRes, i, NULL, NULL);
@@ -64,17 +64,17 @@ typedef struct tagParamsClassify
 
 typedef struct tagParamsDetect
 {
-	string detect_type;	// yolo11, yolo26, rcnn
-	bool agnostic;	// NMSÊ±ÊÇ·ñÀà±ğÎŞ¹Ø
+	string detect_type;	// yolo11, yolov5, yolo26, rcnn
+	bool agnostic;	// NMSæ—¶æ˜¯å¦ç±»åˆ«æ— å…³
 	double scoreThreshold;
 	double nmsThreshold;
 	vector<int> classes;
-	//Ô¤´¦Àí²ÎÊı
-	bool scale_fill;// ÊÇ·ñÖ±½ÓÀ­ÉìÍ¼ÏñÖÁÄ¿±ê³ß´ç
-	bool isCenter;// ÊÇ·ñ¾ÓÖĞ·ÅÖÃÍ¼Ïñ£¨false Ôò×óÉÏ½Ç¶ÔÆë£©
-	int padding_value;// Ìî³äÑÕÉ«Öµ
-	bool resize;	// rcnnÏµÁĞÔ¤´¦ÀíÊÇ·ñresize
-	double epsilon;	// ¼ò»¯ÂÖÀªÊ±µÄ¶à±ßĞÎ½üËÆãĞÖµ
+	//é¢„å¤„ç†å‚æ•°
+	bool scale_fill;// æ˜¯å¦ç›´æ¥æ‹‰ä¼¸å›¾åƒè‡³ç›®æ ‡å°ºå¯¸
+	bool isCenter;// æ˜¯å¦å±…ä¸­æ”¾ç½®å›¾åƒï¼ˆfalse åˆ™å·¦ä¸Šè§’å¯¹é½ï¼‰
+	int padding_value;// å¡«å……é¢œè‰²å€¼
+	bool resize;	// rcnnç³»åˆ—é¢„å¤„ç†æ˜¯å¦resize
+	double epsilon;	// ç®€åŒ–è½®å»“æ—¶çš„å¤šè¾¹å½¢è¿‘ä¼¼é˜ˆå€¼
 	bool verify;
 	double iou;
 }ParamsDetect, * pParamsDetect;
@@ -213,20 +213,20 @@ void TestRegress(ParamsModel& p)
 {
 	if (imgs.empty())
 	{
-		cerr << p.img_path + "ÄÚÎŞÍ¼Æ¬" << endl;
+		cerr << p.img_path + "å†…æ— å›¾ç‰‡" << endl;
 		return;
 	}
 	pTorchApp = make_shared<TorchRegress>();
 	pTorchApp->initial(path + "/" + p.model_file, p.imgsz, path + "/labels.txt", p.useGPU, p.channel, p.mean, p.stdev);
 	shared_ptr<TorchRegress> pRegress = dynamic_pointer_cast<TorchRegress>(pTorchApp);
-	// ²¹³äÍ¼Æ¬ÊıÁ¿Îªbatch_sizeµÄÕû±¶Êı
+	// è¡¥å……å›¾ç‰‡æ•°é‡ä¸ºbatch_sizeçš„æ•´å€æ•°
 	int num = imgs.size() % params.batch_size ? (imgs.size() / params.batch_size + 1) * params.batch_size : imgs.size();
 	Mat empty_img = Mat::zeros(imgs[0].size(), imgs[0].type());
 	imgs.resize(num, empty_img);
 	vector<vector<float>> outputs;
 	outputs.reserve(imgs.size());
 	auto it = imgs.begin();
-	// ¿ªÊ¼¼ì²â
+	// å¼€å§‹æ£€æµ‹
 	clock_t start0 = clock();
 	while (it != imgs.end())
 	{
@@ -237,7 +237,7 @@ void TestRegress(ParamsModel& p)
 		Sleep(1);
 	}
 	double time0 = double(clock() - start0) / CLOCKS_PER_SEC;
-	cout << "ÓÃÊ±" << time0 << "Ãë" << endl;
+	cout << "ç”¨æ—¶" << time0 << "ç§’" << endl;
 	imgs.resize(img_files.size());
 	for (int i = 0; i != imgs.size(); ++i)
 	{
@@ -251,7 +251,7 @@ void TestRegress(ParamsModel& p)
 void ClassifyImages(ParamsClassify& p, vector<vector<ClassifyOutput>>& outputs)
 {
 	shared_ptr<TorchClassify> pClassify = dynamic_pointer_cast<TorchClassify>(pTorchApp);
-	// ²¹³äÍ¼Æ¬ÊıÁ¿Îªbatch_sizeµÄÕû±¶Êı
+	// è¡¥å……å›¾ç‰‡æ•°é‡ä¸ºbatch_sizeçš„æ•´å€æ•°
 	int num = imgs.size() % params.batch_size ? (imgs.size() / params.batch_size + 1) * params.batch_size : imgs.size();
 	Mat empty_img = Mat::zeros(imgs[0].size(), imgs[0].type());
 	imgs.resize(num, empty_img);
@@ -295,7 +295,7 @@ void ClassifyPath(const string& img_path, void* pDataP)
 			CopyFile((img_path + "\\" + img_files[i]).c_str(), ("false\\" + gt_cls + "\\" + img_files[i]).c_str(), TRUE);
 		}
 	}
-	cout << gt_cls << "\tÕıÈ·ÂÊ\t" << static_cast<double>(correct) / imgs.size() << "\t×ÜÊı\t" << imgs.size() << endl;
+	cout << gt_cls << "\tæ­£ç¡®ç‡\t" << static_cast<double>(correct) / imgs.size() << "\tæ€»æ•°\t" << imgs.size() << endl;
 }
 
 void TestClassify(ParamsModel& p)
@@ -303,7 +303,7 @@ void TestClassify(ParamsModel& p)
 	ParamsClassify pc = LoadParamsClassify();
 	pTorchApp = make_shared<TorchClassify>();
 	pTorchApp->initial(path + "/" + p.model_file, p.imgsz, path + " / labels.txt", p.useGPU, p.channel, p.mean, p.stdev);
-	// ¿ªÊ¼ÔËËã
+	// å¼€å§‹è¿ç®—
 	clock_t start0 = clock();
 	vector<vector<ClassifyOutput>> outputs;
 	if (pc.verify)
@@ -312,7 +312,7 @@ void TestClassify(ParamsModel& p)
 	{
 		if (imgs.empty())
 		{
-			cerr << p.img_path + "ÄÚÎŞÍ¼Æ¬" << endl;
+			cerr << p.img_path + "å†…æ— å›¾ç‰‡" << endl;
 			return;
 		}
 		ClassifyImages(pc, outputs);
@@ -325,14 +325,14 @@ void TestClassify(ParamsModel& p)
 		}
 	}
 	double time0 = double(clock() - start0) / CLOCKS_PER_SEC;
-	cout << "ÓÃÊ±" << time0 << "Ãë" << endl;
+	cout << "ç”¨æ—¶" << time0 << "ç§’" << endl;
 }
 
 void TestCRNN(ParamsModel& p)
 {
 	if (imgs.empty())
 	{
-		cerr << p.img_path + "ÄÚÎŞÍ¼Æ¬" << endl;
+		cerr << p.img_path + "å†…æ— å›¾ç‰‡" << endl;
 		return;
 	}
 	pTorchApp = make_shared<TorchCRNN>();
@@ -349,7 +349,7 @@ void TestCRNN(ParamsModel& p)
 		cout << ")" << endl;
 	}
 	double time0 = double(clock() - start0) / CLOCKS_PER_SEC;
-	cout << "ÓÃÊ±" << time0 << "Ãë" << endl;
+	cout << "ç”¨æ—¶" << time0 << "ç§’" << endl;
 }
 
 double ContentIOU(const vector<int>& content1, const vector<int>& content2)
@@ -358,11 +358,11 @@ double ContentIOU(const vector<int>& content1, const vector<int>& content2)
 	double areaUnion = 0.0;
 	if (params.mode == "detect" || params.mode == "keypoint")
 	{
-		// ¼ÆËã¾ØĞÎ½»¼¯
+		// è®¡ç®—çŸ©å½¢äº¤é›†
 		int dx = MIN(content1[0] + content1[2], content2[0] + content2[2]) - MAX(content1[0], content2[0]);
 		int dy = MIN(content1[1] + content1[3], content2[1] + content2[3]) - MAX(content1[1], content2[1]);
 		areaInter = MAX(0, dx) * MAX(0, dy);
-		// ¼ÆËã¾ØĞÎ²¢¼¯
+		// è®¡ç®—çŸ©å½¢å¹¶é›†
 		int area1 = content1[2] * content1[3];
 		int area2 = content2[2] * content2[3];
 		areaUnion = area1 + area2 - areaInter;
@@ -378,31 +378,31 @@ double ContentIOU(const vector<int>& content1, const vector<int>& content2)
 			contour2.push_back(cv::Point(content2[i], content2[i + 1]));
 		Rect rect1 = boundingRect(contour1);
 		Rect rect2 = boundingRect(contour2);
-		// ÁªºÏ¾ØĞÎ£º¸²¸ÇÁ½¸öÂÖÀªµÄ×îĞ¡¾ØĞÎ£¨½öÔÚ¸ÃÇøÓòÉú³ÉÑÚÂë£¬¼õÉÙÎŞĞ§ÔËËã£©
+		// è”åˆçŸ©å½¢ï¼šè¦†ç›–ä¸¤ä¸ªè½®å»“çš„æœ€å°çŸ©å½¢ï¼ˆä»…åœ¨è¯¥åŒºåŸŸç”Ÿæˆæ©ç ï¼Œå‡å°‘æ— æ•ˆè¿ç®—ï¼‰
 		Rect unionRect(
 			min(rect1.x, rect2.x),    // x1
 			min(rect1.y, rect2.y),    // y1
 			max(rect1.x + rect1.width, rect2.x + rect2.width) - min(rect1.x, rect2.x),  // width
 			max(rect1.y + rect1.height, rect2.y + rect2.height) - min(rect1.y, rect2.y) // height
 		);
-		// Éú³ÉÁ½¸öÂÖÀªÔÚÁªºÏ¾ØĞÎÄÚµÄ¶şÖµÑÚÂë
+		// ç”Ÿæˆä¸¤ä¸ªè½®å»“åœ¨è”åˆçŸ©å½¢å†…çš„äºŒå€¼æ©ç 
 		Mat mask1 = Mat::zeros(unionRect.size(), CV_8U);
 		Mat mask2 = Mat::zeros(unionRect.size(), CV_8U);
-		// ÂÖÀª×ø±êÆ«ÒÆ£º½«ÂÖÀªµã×ª»»ÎªÁªºÏ¾ØĞÎÄÚµÄÏà¶Ô×ø±ê£¨±ÜÃâ³¬³öÑÚÂë·¶Î§£©
+		// è½®å»“åæ ‡åç§»ï¼šå°†è½®å»“ç‚¹è½¬æ¢ä¸ºè”åˆçŸ©å½¢å†…çš„ç›¸å¯¹åæ ‡ï¼ˆé¿å…è¶…å‡ºæ©ç èŒƒå›´ï¼‰
 		vector<Point> contour1_offset, contour2_offset;
 		for (const auto& p : contour1)
 			contour1_offset.emplace_back(p.x - unionRect.x, p.y - unionRect.y);
 		for (const auto& p : contour2)
 			contour2_offset.emplace_back(p.x - unionRect.x, p.y - unionRect.y);
-		// Ìî³äÂÖÀªÎª°×É«
+		// å¡«å……è½®å»“ä¸ºç™½è‰²
 		fillPoly(mask1, vector<vector<Point>>{contour1_offset}, Scalar(255));
 		fillPoly(mask2, vector<vector<Point>>{contour2_offset}, Scalar(255));
-		// ¼ÆËãÃæ»ı
+		// è®¡ç®—é¢ç§¯
 		int area1 = countNonZero(mask1);
 		int area2 = countNonZero(mask2);
 		if (area1 == 0 || area2 == 0)
 			return 0.0;
-		// ¼ÆËã½»¼¯Ãæ»ı£¨bitwise_and ÊÇÖğÏñËØÓëÔËËã£¬µ×²ãÓÅ»¯£©
+		// è®¡ç®—äº¤é›†é¢ç§¯ï¼ˆbitwise_and æ˜¯é€åƒç´ ä¸è¿ç®—ï¼Œåº•å±‚ä¼˜åŒ–ï¼‰
 		Mat maskIntersection;
 		bitwise_and(mask1, mask2, maskIntersection);
 		areaInter = countNonZero(maskIntersection);
@@ -415,17 +415,17 @@ bool VerifyInfo(const ImgInfo& info1, const ImgInfo& info2)
 {
 	if (info1.objs.size() != info2.objs.size())
 		return false;
-	vector<bool> matched(info2.objs.size(), false);	// ¼ÇÂ¼info2ÖĞÃ¿¸öÄ¿±êÊÇ·ñÒÑ±»Æ¥Åä
+	vector<bool> matched(info2.objs.size(), false);	// è®°å½•info2ä¸­æ¯ä¸ªç›®æ ‡æ˜¯å¦å·²è¢«åŒ¹é…
 	for (const auto& obj1 : info1.objs)
 	{
 		bool found = false;
 		for (size_t j = 0; j < info2.objs.size(); ++j)
 		{
-			// Ö»Æ¥ÅäÎ´±»Ê¹ÓÃµÄinfo2Ä¿±ê
+			// åªåŒ¹é…æœªè¢«ä½¿ç”¨çš„info2ç›®æ ‡
 			if (!matched[j] && ContentIOU(obj1.content, info2.objs[j].content) >= 0.5)
 			{
 				found = true;
-				matched[j] = true; // ±ê¼ÇÎªÒÑÆ¥Åä
+				matched[j] = true; // æ ‡è®°ä¸ºå·²åŒ¹é…
 				break;
 			}
 		}
@@ -461,9 +461,9 @@ void ShowImg(Mat img, const string& save_path, const string& img_file, vector<De
 		if (params.mode == "segment")
 		{
 			matMask(res.box).setTo(color, res.mask);
-			vector<vector<cv::Point>> contours; // ÓÃÓÚ´æ´¢ËùÓĞÂÖÀªµÄÏòÁ¿
-			vector<cv::Vec4i> hierarchy; // ÓÃÓÚ´æ´¢ÂÖÀªµÄ²ã´Î¹ØÏµ£¨¿ÉÑ¡£©
-			cv::findContours(res.mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); // ²éÕÒÂÖÀª
+			vector<vector<cv::Point>> contours; // ç”¨äºå­˜å‚¨æ‰€æœ‰è½®å»“çš„å‘é‡
+			vector<cv::Vec4i> hierarchy; // ç”¨äºå­˜å‚¨è½®å»“çš„å±‚æ¬¡å…³ç³»ï¼ˆå¯é€‰ï¼‰
+			cv::findContours(res.mask, contours, hierarchy, cv::RETR_EXTERNAL, cv::CHAIN_APPROX_SIMPLE); // æŸ¥æ‰¾è½®å»“
 			int index = 0;
 			double max_area = 0;
 			for (int i = 0; i != contours.size(); ++i)
@@ -476,8 +476,8 @@ void ShowImg(Mat img, const string& save_path, const string& img_file, vector<De
 				}
 			}
 			vector<cv::Point> points;
-			double epsilon = pd.epsilon * arcLength(contours[index], true); // ¼ò»¯ãĞÖµ£¨»ùÓÚÂÖÀªÖÜ³¤£©
-			approxPolyDP(contours[index], points, epsilon, true);            // ¶à±ßĞÎ±Æ½ü
+			double epsilon = pd.epsilon * arcLength(contours[index], true); // ç®€åŒ–é˜ˆå€¼ï¼ˆåŸºäºè½®å»“å‘¨é•¿ï¼‰
+			approxPolyDP(contours[index], points, epsilon, true);            // å¤šè¾¹å½¢é€¼è¿‘
 			for (auto& p : points)
 			{
 				obj.content.push_back(p.x + res.box.x);
@@ -527,17 +527,22 @@ void TestDetect(ParamsModel& p)
 {
 	if (imgs.empty())
 	{
-		cerr << p.img_path + "ÄÚÎŞÍ¼Æ¬" << endl;
+		cerr << p.img_path + "å†…æ— å›¾ç‰‡" << endl;
 		return;
 	}
 	ParamsDetect pd = LoadParamsDetect();
-	// ¹¹½¨ÊµÀı
+	// æ„å»ºå®ä¾‹
 	if (pd.detect_type.substr(0, 4) == "yolo")
 	{
 		if (pd.detect_type == "yolo11")	// yolo11
 		{
 			pTorchApp = make_shared<TorchYolo11Final>();
 			dynamic_pointer_cast<TorchYolo11>(pTorchApp)->setDetectParam(pd.agnostic, pd.nmsThreshold);
+		}
+		else if (pd.detect_type == "yolov5")	// yolov5
+		{
+			pTorchApp = make_shared<TorchYoloV5Final>();
+			dynamic_pointer_cast<TorchYoloV5>(pTorchApp)->setDetectParam(pd.agnostic, pd.nmsThreshold);
 		}
 		else if (pd.detect_type == "yolo26")	// yolo26
 			pTorchApp = make_shared<TorchYolo26Final>();
@@ -551,32 +556,32 @@ void TestDetect(ParamsModel& p)
 	}
 	else
 	{
-		cerr << "detect_type±ØĞëÊÇÒÔÏÂÖ®Ò»:[ ";
+		cerr << "detect_typeå¿…é¡»æ˜¯ä»¥ä¸‹ä¹‹ä¸€:[ ";
 		for (auto& type : detect_types)
 			cerr << type << " ";
 		cerr << "]" << endl;
 		return;
 	}
-	// Ä£ĞÍ³õÊ¼»¯
+	// æ¨¡å‹åˆå§‹åŒ–
 	pTorchApp->initial(path + "/" + p.model_file, p.imgsz, path + "/labels.txt", p.useGPU, p.channel, p.mean, p.stdev);
 	if (pd.verify)
 		gt_infos = ReadAnnotation(path + "/" + p.img_path + "/annotation.txt");
-	// ²¹³äÍ¼Æ¬ÊıÁ¿Îªbatch_sizeµÄÕû±¶Êı
+	// è¡¥å……å›¾ç‰‡æ•°é‡ä¸ºbatch_sizeçš„æ•´å€æ•°
 	int num = imgs.size() % params.batch_size ? (imgs.size() / params.batch_size + 1) * params.batch_size : imgs.size();
 	Mat empty_img = Mat::zeros(imgs[0].size(), imgs[0].type());
 	imgs.resize(num, empty_img);
 	vector<vector<DetectOutput>> outputs;
 	outputs.reserve(imgs.size());
 	auto it = imgs.begin();
-	// ¿ªÊ¼¼ì²â
+	// å¼€å§‹æ£€æµ‹
 	clock_t start0 = clock();
 	while (it != imgs.end())
 	{
 		vector<Mat> batch_imgs(it, it + params.batch_size);
 		vector<vector<DetectOutput>> results;
-		if (p.mode == "detect")	//¼ì²â
+		if (p.mode == "detect")	//æ£€æµ‹
 			results = dynamic_pointer_cast<TorchDetect>(pTorchApp)->detect(batch_imgs, pd.scoreThreshold, pd.classes);
-		else if (p.mode == "segment")	//·Ö¸î
+		else if (p.mode == "segment")	//åˆ†å‰²
 			results = dynamic_pointer_cast<TorchSegment>(pTorchApp)->segment(batch_imgs, pd.scoreThreshold, pd.classes);
 		else if (p.mode == "keypoint")
 			results = dynamic_pointer_cast<TorchKeyPoint>(pTorchApp)->detectKeyPoint(batch_imgs, pd.scoreThreshold, pd.classes);
@@ -585,7 +590,7 @@ void TestDetect(ParamsModel& p)
 		Sleep(1);
 	}
 	double time0 = double(clock() - start0) / CLOCKS_PER_SEC;
-	cout << "ÓÃÊ±" << time0 << "Ãë" << endl;
+	cout << "ç”¨æ—¶" << time0 << "ç§’" << endl;
 	imgs.resize(img_files.size());
 	string save_path = path + "/" + p.img_path + "_";
 	CreateDirectory(save_path.c_str(), NULL);
@@ -608,7 +613,7 @@ int main()
 		colors.push_back(cv::Scalar(b, g, r));
 	}
 	fin.close();
-	cerr << "ÊäÈëÎÄ¼ş¼Ğ,ÎÄ¼ş¼ĞÄÚ°üº¬\nÄ£ĞÍÎÄ¼ş--best.torchscript\n±êÇ©ÎÄ¼ş--labels.txt£¨¿ÉÑ¡£©\nÄ£ĞÍÅäÖÃÎÄ¼ş--settings_model.xml\n´ıÊ¶±ğÍ¼Æ¬ÎÄ¼ş¼Ğ--images\n£º";
+	cerr << "è¾“å…¥æ–‡ä»¶å¤¹,æ–‡ä»¶å¤¹å†…åŒ…å«\næ¨¡å‹æ–‡ä»¶--best.torchscript\næ ‡ç­¾æ–‡ä»¶--labels.txtï¼ˆå¯é€‰ï¼‰\næ¨¡å‹é…ç½®æ–‡ä»¶--settings_model.xml\nå¾…è¯†åˆ«å›¾ç‰‡æ–‡ä»¶å¤¹--images\nï¼š";
 	cin >> path;
 	params = LoadParamsModel();
 	LoadImages(path + "/" + params.img_path);
@@ -622,7 +627,7 @@ int main()
 		TestDetect(params);
 	else
 	{
-		cerr << "mode±ØĞëÊÇÒÔÏÂÖ®Ò»:[ ";
+		cerr << "modeå¿…é¡»æ˜¯ä»¥ä¸‹ä¹‹ä¸€:[ ";
 		for (auto& mode : modes)
 			cerr << mode << " ";
 		cerr << "]" << endl;

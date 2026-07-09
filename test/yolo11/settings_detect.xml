@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <opencv_storage>
-  <DetectType>yolo11</DetectType> <!--yolo11, yolo26, rcnn-->
+  <DetectType>yolo11</DetectType> <!--yolo11, yolov5, yolo26, rcnn-->
   <Agnostic>1</Agnostic>  <!--NMS时是否类别无关-->
   <ScoreThreshold>0.25</ScoreThreshold>
   <NMSThreshold>0.45</NMSThreshold>

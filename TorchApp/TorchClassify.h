@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHCLASSIFY_H
+﻿#ifndef TORCHAPP_TORCHCLASSIFY_H
 #define TORCHAPP_TORCHCLASSIFY_H
 
 #include "TorchApp.h"

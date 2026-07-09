@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHKEYPOINT_H
+﻿#ifndef TORCHAPP_TORCHKEYPOINT_H
 #define TORCHAPP_TORCHKEYPOINT_H
 
 #include "TorchDetect.h"
@@ -33,6 +33,18 @@ namespace torchapp {
 	public:
 		TorchYolo11Pose() {}
 		virtual ~TorchYolo11Pose() {}
+
+		virtual vector<DetectOutput> detectKeyPoint(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<vector<DetectOutput>> detectKeyPoint(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
+
+	};
+
+
+	class TORCHAPP_API TorchYoloV5Pose :public TorchYoloPose, virtual public TorchYoloV5
+	{
+	public:
+		TorchYoloV5Pose() {}
+		virtual ~TorchYoloV5Pose() {}
 
 		virtual vector<DetectOutput> detectKeyPoint(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
 		virtual vector<vector<DetectOutput>> detectKeyPoint(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});

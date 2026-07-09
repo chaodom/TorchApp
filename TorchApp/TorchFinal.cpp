@@ -1,4 +1,4 @@
-#include "TorchFinal.h"
+﻿#include "TorchFinal.h"
 
 namespace torchapp {
 
@@ -30,6 +30,37 @@ namespace torchapp {
 	vector<vector<DetectOutput>> TorchYolo11Final::detectKeyPoint(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
 	{
 		return TorchYolo11Pose::detectKeyPoint(imgs, scoreThreshold, classes);
+	}
+
+
+	vector<DetectOutput> TorchYoloV5Final::detect(Mat img, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloV5::detect(img, scoreThreshold, classes);
+	}
+
+	vector<vector<DetectOutput>> TorchYoloV5Final::detect(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloV5::detect(imgs, scoreThreshold, classes);
+	}
+
+	vector<DetectOutput> TorchYoloV5Final::segment(Mat img, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloV5Seg::segment(img, scoreThreshold, classes);
+	}
+
+	vector<vector<DetectOutput>> TorchYoloV5Final::segment(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloV5Seg::segment(imgs, scoreThreshold, classes);
+	}
+
+	vector<DetectOutput> TorchYoloV5Final::detectKeyPoint(Mat img, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloV5Pose::detectKeyPoint(img, scoreThreshold, classes);
+	}
+
+	vector<vector<DetectOutput>> TorchYoloV5Final::detectKeyPoint(vector<Mat> imgs, double scoreThreshold, vector<int> classes)
+	{
+		return TorchYoloV5Pose::detectKeyPoint(imgs, scoreThreshold, classes);
 	}
 
 

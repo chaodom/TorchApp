@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHSEGMENT_H
+ï»¿#ifndef TORCHAPP_TORCHSEGMENT_H
 #define TORCHAPP_TORCHSEGMENT_H
 
 #include "TorchDetect.h"
@@ -19,7 +19,7 @@ namespace torchapp {
 	class TORCHAPP_API TorchYoloSeg :public TorchSegment, virtual public TorchYolo
 	{
 	public:
-		TorchYoloSeg() { m_scale_fill = true; }	// ¾­ÊµÑé¿ªÆôm_scale_fillÊ±Ğ§¹û×îºÃ
+		TorchYoloSeg() { m_scale_fill = true; }	// ç»å®éªŒå¼€å¯m_scale_fillæ—¶æ•ˆæœæœ€å¥½
 		virtual ~TorchYoloSeg() {}
 
 		virtual vector<DetectOutput> segment(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
@@ -33,6 +33,17 @@ namespace torchapp {
 	public:
 		TorchYolo11Seg() {}
 		virtual ~TorchYolo11Seg() {}
+
+		virtual vector<DetectOutput> segment(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<vector<DetectOutput>> segment(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
+	};
+
+
+	class TORCHAPP_API TorchYoloV5Seg :public TorchYoloSeg, virtual public TorchYoloV5
+	{
+	public:
+		TorchYoloV5Seg() {}
+		virtual ~TorchYoloV5Seg() {}
 
 		virtual vector<DetectOutput> segment(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
 		virtual vector<vector<DetectOutput>> segment(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});

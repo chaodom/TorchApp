@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHDETECT_H
+ï»¿#ifndef TORCHAPP_TORCHDETECT_H
 #define TORCHAPP_TORCHDETECT_H
 
 #include "TorchApp.h"
@@ -52,7 +52,7 @@ namespace torchapp {
 		void scaleBox(cv::Rect& box, Mat img);
 		Mat adjustMask(Mat mask, Mat origin_img, const cv::Rect& box);
 		void scaleCoord(vector<cv::Point>& points, Mat img);
-		// ¶ÔÒ»ÕÅÍ¼µÄÔ¤²â½á¹û½øĞĞºó´¦Àí, classesÊÇĞèÒª¿¼ÂÇµÄÀà±ğid£¨Îª¿Õ±íÊ¾¿¼ÂÇÈ«²¿Àà±ğ£©
+		// å¯¹ä¸€å¼ å›¾çš„é¢„æµ‹ç»“æœè¿›è¡Œåå¤„ç†, classesæ˜¯éœ€è¦è€ƒè™‘çš„ç±»åˆ«idï¼ˆä¸ºç©ºè¡¨ç¤ºè€ƒè™‘å…¨éƒ¨ç±»åˆ«ï¼‰
 		virtual vector<DetectOutput> processOne(
 			at::Tensor* pPredict,
 			Mat origin_img,
@@ -62,9 +62,9 @@ namespace torchapp {
 		) = 0;
 
 	protected:
-		bool m_scale_fill;	// ÊÇ·ñÖ±½ÓÀ­ÉìÍ¼ÏñÖÁÄ¿±ê³ß´ç
-		bool m_isCenter;	// ÊÇ·ñ¾ÓÖĞ·ÅÖÃÍ¼Ïñ£¨false Ôò×óÉÏ½Ç¶ÔÆë£©
-		int m_padding_value;	// Ìî³äÑÕÉ«Öµ
+		bool m_scale_fill;	// æ˜¯å¦ç›´æ¥æ‹‰ä¼¸å›¾åƒè‡³ç›®æ ‡å°ºå¯¸
+		bool m_isCenter;	// æ˜¯å¦å±…ä¸­æ”¾ç½®å›¾åƒï¼ˆfalse åˆ™å·¦ä¸Šè§’å¯¹é½ï¼‰
+		int m_padding_value;	// å¡«å……é¢œè‰²å€¼
 	};
 
 
@@ -83,7 +83,7 @@ namespace torchapp {
 		virtual vector<vector<DetectOutput>> detect(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
 
 	protected:
-		// ¶ÔÒ»ÕÅÍ¼µÄÔ¤²â½á¹û½øĞĞºó´¦Àí, classesÊÇĞèÒª¿¼ÂÇµÄÀà±ğid£¨Îª¿Õ±íÊ¾¿¼ÂÇÈ«²¿Àà±ğ£©
+		// å¯¹ä¸€å¼ å›¾çš„é¢„æµ‹ç»“æœè¿›è¡Œåå¤„ç†, classesæ˜¯éœ€è¦è€ƒè™‘çš„ç±»åˆ«idï¼ˆä¸ºç©ºè¡¨ç¤ºè€ƒè™‘å…¨éƒ¨ç±»åˆ«ï¼‰
 		virtual vector<DetectOutput> processOne(
 			at::Tensor *pPredict,
 			Mat origin_img,
@@ -93,9 +93,39 @@ namespace torchapp {
 		);
 
 	protected:
-		bool m_agnostic;	// ÎªÕæ±íÊ¾Àà±ğÎŞ¹Ønms
-		double m_nmsThreshold;	// NMSãĞÖµ
+		bool m_agnostic;	// ä¸ºçœŸè¡¨ç¤ºç±»åˆ«æ— å…³nms
+		double m_nmsThreshold;	// NMSé˜ˆå€¼
 
+	};
+
+
+	class TORCHAPP_API TorchYoloV5 :virtual public TorchYolo
+	{
+	public:
+		TorchYoloV5() :m_agnostic(true), m_nmsThreshold(0.45) {}
+		virtual ~TorchYoloV5() {}
+
+		inline void setDetectParam(bool agnostic = true, double nmsThreshold = 0.45)
+		{
+			m_agnostic = agnostic;
+			m_nmsThreshold = nmsThreshold;
+		}
+		virtual vector<DetectOutput> detect(Mat img, double scoreThreshold = 0.25, vector<int> classes = {});
+		virtual vector<vector<DetectOutput>> detect(vector<Mat> imgs, double scoreThreshold = 0.25, vector<int> classes = {});
+
+	protected:
+		// å¯¹ä¸€å¼ å›¾çš„é¢„æµ‹ç»“æœè¿›è¡Œåå¤„ç†, classesæ˜¯éœ€è¦è€ƒè™‘çš„ç±»åˆ«idï¼ˆä¸ºç©ºè¡¨ç¤ºè€ƒè™‘å…¨éƒ¨ç±»åˆ«ï¼‰
+		virtual vector<DetectOutput> processOne(
+			at::Tensor* pPredict,
+			Mat origin_img,
+			double scoreThreshold,
+			vector<int> classes,
+			at::Tensor* pProto = nullptr
+		);
+
+	protected:
+		bool m_agnostic;	// ä¸ºçœŸè¡¨ç¤ºç±»åˆ«æ— å…³nms
+		double m_nmsThreshold;	// NMSé˜ˆå€¼
 	};
 
 
@@ -109,7 +139,7 @@ namespace torchapp {
 		virtual vector<vector<DetectOutput>> detect(vector<Mat> imgs, double scoreThreshold = 0.25 , vector<int> classes = {});
 
 	protected:
-		// ¶ÔÅú´ÎÍ¼Æ¬µÄÔ¤²â½á¹û½øĞĞºó´¦Àí, classesÊÇĞèÒª¿¼ÂÇµÄÀà±ğid£¨Îª¿Õ±íÊ¾¿¼ÂÇÈ«²¿Àà±ğ£©
+		// å¯¹æ‰¹æ¬¡å›¾ç‰‡çš„é¢„æµ‹ç»“æœè¿›è¡Œåå¤„ç†, classesæ˜¯éœ€è¦è€ƒè™‘çš„ç±»åˆ«idï¼ˆä¸ºç©ºè¡¨ç¤ºè€ƒè™‘å…¨éƒ¨ç±»åˆ«ï¼‰
 		virtual vector<DetectOutput> processOne(
 			at::Tensor* pPredict,
 			Mat origin_img,
@@ -170,10 +200,10 @@ namespace torchapp {
 		bool m_bResize;
 		int m_minSize;
 		int m_maxSize;
-		double m_nmsThreshold;	// NMSãĞÖµ
-		double m_maskThreshold;	// maskãĞÖµ
-		double m_scale_w;	// Ô­Í¼¿í¶È/resizeÖ®ºóÍ¼Æ¬¿í¶È
-		double m_scale_h;	// Ô­Í¼¸ß¶È/resizeÖ®ºóÍ¼Æ¬¸ß¶È
+		double m_nmsThreshold;	// NMSé˜ˆå€¼
+		double m_maskThreshold;	// maské˜ˆå€¼
+		double m_scale_w;	// åŸå›¾å®½åº¦/resizeä¹‹åå›¾ç‰‡å®½åº¦
+		double m_scale_h;	// åŸå›¾é«˜åº¦/resizeä¹‹åå›¾ç‰‡é«˜åº¦
 	};
 }
 

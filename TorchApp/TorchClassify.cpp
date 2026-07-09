@@ -1,4 +1,4 @@
-#include "TorchClassify.h"
+ï»¿#include "TorchClassify.h"
 #include <torch/script.h>
 
 namespace torchapp {
@@ -11,20 +11,20 @@ namespace torchapp {
 	vector<vector<ClassifyOutput>> TorchClassify::classify(vector<Mat> imgs, int N)
 	{
 		auto result = forward(imgs).toTensor();	// [batch_size, class_num]
-		// ´òÓ¡
+		// æ‰“å°
 		//print(result[0]);
 		N = MIN(N, result.size(-1));
 		auto softmaxs = result.softmax(-1);
 		auto results = softmaxs.sort(-1, true);
 		auto [probs, indices] = softmaxs.sort(-1, true);
-		// ½öµ±tensor²»ÔÚCPUÊ±²Å¿½±´£¬¼õÉÙÈßÓà¿½±´
+		// ä»…å½“tensorä¸åœ¨CPUæ—¶æ‰æ‹·è´ï¼Œå‡å°‘å†—ä½™æ‹·è´
 		torch::Device cpu_device(torch::kCPU);
 		if (indices.device() != cpu_device)
 		{
 			indices = indices.to(cpu_device);
 			probs = probs.to(cpu_device);
 		}
-		// È·±£ÄÚ´æÁ¬Ğø£¨±ÜÃâstrideµ¼ÖÂµÄÖ¸Õë·ÃÎÊÒì³££©
+		// ç¡®ä¿å†…å­˜è¿ç»­ï¼ˆé¿å…strideå¯¼è‡´çš„æŒ‡é’ˆè®¿é—®å¼‚å¸¸ï¼‰
 		indices = indices.contiguous();
 		probs = probs.contiguous();
 		vector<vector<ClassifyOutput>> outputs;

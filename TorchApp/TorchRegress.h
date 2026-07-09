@@ -1,4 +1,4 @@
-#ifndef TORCHAPP_TORCHREGRESS_H
+﻿#ifndef TORCHAPP_TORCHREGRESS_H
 #define TORCHAPP_TORCHREGRESS_H
 
 #include "TorchApp.h"
